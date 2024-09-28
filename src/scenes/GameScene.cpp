@@ -4,7 +4,7 @@
 #include <latebit/core/ResourceManager.h>
 
 #include <sstream>
-#include "../characters/Fish.cpp"
+#include "../characters/Bird.cpp"
 
 using namespace lb;
 
@@ -53,7 +53,7 @@ private:
   //
   // Head to the GameScene constructor to see how to set up a scene!
   WelcomeText *welcomeText = new WelcomeText();
-  Fish *fish = new Fish();
+  Bird *bird = new Bird();
   Logo *logo = new Logo();
 
 public:
@@ -83,7 +83,7 @@ public:
     // A box is a simplified, rectangular representation of an object's boundaries. 
     // It defines the minimum and maximum extents of the object along each axis,
     // providing an efficient way to perform collision detection and spatial queries.
-    const auto fishBox = this->fish->getBox();
+    const auto birdBox = this->bird->getBox();
     const auto logoBox = this->logo->getBox();
 
     // Positions are defined by bidimensional vectors. You can perform standard
@@ -91,20 +91,20 @@ public:
     // for more information.
     this->welcomeText->setPosition(center - Vector(0, 5));
 
-    this->fish->setPosition(
-        center - Vector(fishBox.getWidth() / 2, 32 - fishBox.getHeight() / 2));
+    this->bird->setPosition(
+        center - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
 
     this->logo->setPosition(center - Vector(logoBox.getWidth() / 2, 0));
 
     // Now you are ready to see how the objects we have manipulated are defined.
-    // Go check the WelcomeText, Logo, and Fish to start implementing your first objects.
+    // Go check the WelcomeText, Logo, and Bird to start implementing your first objects.
   }
 
   ~GameScene() {
     // GameScene owns our mascotte, the text, and the logo, therefore it's responsible
     // for cleaning them up once it gets detroyed.
     WM.removeObject(this->logo);
-    WM.removeObject(this->fish);
+    WM.removeObject(this->bird);
     WM.removeObject(this->welcomeText);
   };
 };
