@@ -11,7 +11,6 @@ public:
   Tile(): Object("Tile") {
     setSprite("floor");
     setSolidness(Solidness::SOFT);
-    setDebug(true);
   }
 };
 
@@ -35,7 +34,6 @@ public:
     setBox(Box(DM.getHorizontalCells()*2, tileHeight));
 
     subscribe(STEP_EVENT);
-    setDebug(true);
   }
 
   auto eventHandler(const Event *e) -> int override {

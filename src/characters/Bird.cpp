@@ -14,17 +14,12 @@ public:
   
     subscribe(INPUT_EVENT);
     subscribe(STEP_EVENT);
-    setDebug(true);
     setVelocity(VELOCITY);
   }
 
   int eventHandler(const Event *event) override {
     if (event->getType() == INPUT_EVENT) {
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
-
-      if (isDashing) {
-        return 1;
-      }
 
       if (inputEvent->getKey() == InputKey::A && inputEvent->getAction() == InputAction::PRESSED) {
         this->sfx->play();
@@ -45,8 +40,7 @@ public:
 private:
   const Sound* sfx = RM.getSound("dash");
   const Vector VELOCITY = Vector(0, 0.8);
-  const Vector DASH_VELOCITY = Vector(0, -1.6);
-  const int DASH_DURATION = 10;
+  const int DASH_DURATION = 15;
 
   int isDashing = false;
   int dashingStep = -1;
@@ -55,14 +49,19 @@ private:
     const auto velocity = getVelocity();
     
     if (isDashing) {
-      setVelocity(DASH_VELOCITY + Vector(0, 0.05));
-      dashingStep--;
 
-      if (dashingStep == 0) {
+      if (dashingStep == DASH_DURATION) {
+        setVelocity(Vector(0));
+      } else if (dashingStep >= DASH_DURATION*2/3) {
+        setVelocity(velocity + Vector(0, -1));
+      } else if (dashingStep >= DASH_DURATION/3) {
+        setVelocity(velocity + Vector(0, 1));
+      } else if (dashingStep == 0) {
         isDashing = false;
         setVelocity(VELOCITY);
       }
 
+      dashingStep--;
       return 1;
     }
 
