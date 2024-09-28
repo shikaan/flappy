@@ -60,6 +60,11 @@ public:
     return this->Object::draw() + result;
   }
 
+  void setAltitude(int altitude) {
+    for (auto &tile : this->tiles) tile.setAltitude(altitude);
+    Object::setAltitude(altitude);
+  }
+
   private:
 
   int reposition() {

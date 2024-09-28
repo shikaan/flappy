@@ -15,7 +15,8 @@ int main() {
 
   RM.loadTextSprite("assets/sprites/bird.lbspr", "bird");
   RM.loadTextSprite("assets/sprites/floor.lbspr", "floor");
-  RM.loadTextSprite("assets/sprites/pipe.lbspr", "pipe");
+  RM.loadTextSprite("assets/sprites/bottom-pipe.lbspr", "bottom-pipe");
+  RM.loadTextSprite("assets/sprites/top-pipe.lbspr", "top-pipe");
   RM.loadMusic("assets/audio/music.lbmus", "music");
   RM.loadSound("assets/audio/sound.lbsfx", "sound");
 

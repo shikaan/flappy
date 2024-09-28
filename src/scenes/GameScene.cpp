@@ -13,37 +13,46 @@ class GameScene : public Object {
 private:
   Bird *bird = new Bird();
   Floor *floor = new Floor();
-
-  Pipe *pipe = new Pipe();
+  array<Pipe*, 3> pipes = { new Pipe(), new Pipe(), new Pipe() };
+  const int HORIZONTAL_CELLS = DM.getHorizontalCells();
+  const int VERTICAL_CELLS = DM.getVerticalCells();
+  const Vector GAME_VELOCITY = Vector(-1, 0);
 
 public:
   GameScene(): Object("GameScene") {
     setType("GameScene");
     DM.setBackground(Color::BLUE);
 
-    const auto music = RM.getMusic("music");
-    if (music != nullptr) {
-      music->play(true);
-    }
-
     // In the following block we are placing objects in the scene.
     const auto center =
-        Vector(DM.getHorizontalCells() / 2.0, DM.getVerticalCells() / 2.0);
+        Vector(HORIZONTAL_CELLS / 2.0, VERTICAL_CELLS / 2.0);
 
     const auto birdBox = this->bird->getBox();
     this->bird->setPosition(
         center - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
+    this->bird->setAltitude(3);
 
-    const auto floorPosition = Vector(0, DM.getVerticalCells() - this->floor->getBox().getHeight());
+    const auto DISTANCE = HORIZONTAL_CELLS / 3;
+    for (int i = 0; i < 3; i++) {
+      const auto pipe = this->pipes[i];
+      const auto pipeWidth = pipe->getBox().getWidth();
+      const auto pipePosition = Vector(HORIZONTAL_CELLS + i * (DISTANCE + pipeWidth/3), -32);
+      pipe->setPosition(pipePosition);
+      pipe->setVelocity(GAME_VELOCITY);
+      pipe->setAltitude(1);
+    }
+
+    const auto floorPosition = Vector(0, VERTICAL_CELLS - this->floor->getBox().getHeight());
     this->floor->setPosition(floorPosition);
-
-    const auto pipeHeight = DM.getVerticalCells() - this->floor->getBox().getHeight() - this->pipe->getBox().getHeight();
-    this->pipe->setPosition(Vector(DM.getHorizontalCells() - 24, pipeHeight));
+    this->floor->setVelocity(GAME_VELOCITY);
+    this->floor->setAltitude(2);
   }
 
   ~GameScene() {
     WM.removeObject(this->bird);
     WM.removeObject(this->floor);
-    WM.removeObject(this->pipe);
+    for (auto pipe : this->pipes) {
+      WM.removeObject(pipe);
+    }
   };
 };
