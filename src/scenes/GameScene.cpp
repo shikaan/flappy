@@ -5,7 +5,7 @@
 
 #include <sstream>
 #include "../characters/Bird.cpp"
-#include "../environment/Floor.cpp"
+#include "../environment/environment.h"
 
 using namespace lb;
 
@@ -14,16 +14,11 @@ private:
   Bird *bird = new Bird();
   Floor *floor = new Floor();
 
-public:
-  GameScene() {
-    // The scene is a container object for all the objects that will be drawn on
-    // the screen.
-    // Setting the type will allow you to retrieve the scene later on and to
-    // identify it in the logs.
-    setType("GameScene");
+  Pipe *pipe = new Pipe();
 
-    // The Display Manager (DM) is responsible for drawing everything on the
-    // screen. Here you can set the background color of the scene for example.
+public:
+  GameScene(): Object("GameScene") {
+    setType("GameScene");
     DM.setBackground(Color::BLUE);
 
     const auto music = RM.getMusic("music");
@@ -41,10 +36,14 @@ public:
 
     const auto floorPosition = Vector(0, DM.getVerticalCells() - this->floor->getBox().getHeight());
     this->floor->setPosition(floorPosition);
+
+    const auto pipeHeight = DM.getVerticalCells() - this->floor->getBox().getHeight() - this->pipe->getBox().getHeight();
+    this->pipe->setPosition(Vector(DM.getHorizontalCells() - 24, pipeHeight));
   }
 
   ~GameScene() {
     WM.removeObject(this->bird);
     WM.removeObject(this->floor);
+    WM.removeObject(this->pipe);
   };
 };

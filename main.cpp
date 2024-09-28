@@ -8,11 +8,14 @@
 using namespace lb;
 
 int main() {
+  Log.setLevel(LogLevel::DEBUG);
+  Log.setDestination(LogDestination::STDOUT);
   Configuration::fromFile("latebit.cfg");
   GM.startUp();
 
   RM.loadTextSprite("assets/sprites/bird.lbspr", "bird");
   RM.loadTextSprite("assets/sprites/floor.lbspr", "floor");
+  RM.loadTextSprite("assets/sprites/pipe.lbspr", "pipe");
   RM.loadMusic("assets/audio/music.lbmus", "music");
   RM.loadSound("assets/audio/sound.lbsfx", "sound");
 
