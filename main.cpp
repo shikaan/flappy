@@ -12,7 +12,7 @@ int main() {
   GM.startUp();
 
   RM.loadTextSprite("assets/sprites/bird.lbspr", "bird");
-  RM.loadImageSprite("assets/sprites/logo.png", "logo");
+  RM.loadTextSprite("assets/sprites/floor.lbspr", "floor");
   RM.loadMusic("assets/audio/music.lbmus", "music");
   RM.loadSound("assets/audio/sound.lbsfx", "sound");
 
