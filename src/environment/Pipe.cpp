@@ -9,6 +9,7 @@ public:
   Pipe(): Object("Pipe") {
     setSprite("pipe");
     subscribe(OUT_EVENT);
+    setSolidness(Solidness::SOFT);
   }
 
   int eventHandler(const Event *e) override {
