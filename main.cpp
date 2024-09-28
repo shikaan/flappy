@@ -17,8 +17,7 @@ int main() {
   RM.loadTextSprite("assets/sprites/floor.lbspr", "floor");
   RM.loadTextSprite("assets/sprites/bottom-pipe.lbspr", "bottom-pipe");
   RM.loadTextSprite("assets/sprites/top-pipe.lbspr", "top-pipe");
-  RM.loadMusic("assets/audio/music.lbmus", "music");
-  RM.loadSound("assets/audio/sound.lbsfx", "sound");
+  RM.loadSound("assets/audio/dash.lbsfx", "dash");
 
   auto scene = new GameScene();
 
