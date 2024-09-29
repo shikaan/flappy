@@ -7,6 +7,7 @@
 #include <sstream>
 #include "../characters/Bird.cpp"
 #include "../environment/environment.h"
+#include "../ui/ui.h"
 
 using namespace lb;
 
@@ -22,15 +23,18 @@ private:
   const Sound* scoreSfx = RM.getSound("score");
   const Sound* gameOverSfx = RM.getSound("game-over");
 
-  int currentScore = 0; 
+  Score *score = new Score();
 
   void init() {
     DM.setBackground(Color::BLUE);
-    currentScore = 0;
+    score->init();
 
     // In the following block we are placing objects in the scene.
     const auto center =
         Vector(HORIZONTAL_CELLS / 2.0, VERTICAL_CELLS / 2.0);
+
+    score->setPosition(Vector(HORIZONTAL_CELLS / 2, 8));
+    score->setAltitude(4);
 
     const auto birdBox = this->bird->getBox();
     this->bird->setPosition(
@@ -55,24 +59,21 @@ private:
 
 public:
   GameScene(): Object("GameScene") {
-    setType("GameScene");
-    subscribe("GameOver");
-    subscribe("Score");
+    subscribe(GAME_OVER_EVENT);
+    subscribe(SCORE_EVENT);
     init();
   }
 
   int eventHandler(const Event *event) override {
-    if (event->getType() == "GameOver") {
+    if (event->getType() == GAME_OVER_EVENT) {
       DM.setBackground(Color::RED);
       this->gameOverSfx->play();
       GM.pause();
       return 1;
     }
 
-    if (event->getType() == "Score") {
+    if (event->getType() == SCORE_EVENT) {
       this->scoreSfx->play();
-      this->currentScore++;
-      Log.info("Score: " + to_string(this->currentScore));
     }
 
     return 0;
