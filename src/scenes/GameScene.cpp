@@ -12,17 +12,21 @@ using namespace lb;
 
 class GameScene : public Object {
 private:
-  Bird *bird = new Bird();
-  Floor *floor = new Floor();
-  array<Pipe*, 3> pipes = { new Pipe(), new Pipe(), new Pipe() };
   const int HORIZONTAL_CELLS = DM.getHorizontalCells();
   const int VERTICAL_CELLS = DM.getVerticalCells();
   const Vector GAME_VELOCITY = Vector(-1, 0);
 
-public:
-  GameScene(): Object("GameScene") {
-    setType("GameScene");
+  Bird *bird = new Bird();
+  Floor *floor = new Floor();
+  array<Pipe*, 3> pipes = { new Pipe(), new Pipe(), new Pipe() };
+  const Sound* scoreSfx = RM.getSound("score");
+  const Sound* gameOverSfx = RM.getSound("game-over");
+
+  int currentScore = 0; 
+
+  void init() {
     DM.setBackground(Color::BLUE);
+    currentScore = 0;
 
     // In the following block we are placing objects in the scene.
     const auto center =
@@ -47,21 +51,28 @@ public:
     this->floor->setPosition(floorPosition);
     this->floor->setVelocity(GAME_VELOCITY);
     this->floor->setAltitude(2);
+  }
 
-
+public:
+  GameScene(): Object("GameScene") {
+    setType("GameScene");
     subscribe("GameOver");
     subscribe("Score");
+    init();
   }
 
   int eventHandler(const Event *event) override {
     if (event->getType() == "GameOver") {
       DM.setBackground(Color::RED);
+      this->gameOverSfx->play();
       GM.pause();
       return 1;
     }
 
     if (event->getType() == "Score") {
-      Log.info("Scored!");
+      this->scoreSfx->play();
+      this->currentScore++;
+      Log.info("Score: " + to_string(this->currentScore));
     }
 
     return 0;
