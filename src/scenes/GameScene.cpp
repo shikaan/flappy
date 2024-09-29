@@ -8,82 +8,96 @@
 #include "../characters/Bird.cpp"
 #include "../environment/environment.h"
 #include "../ui/ui.h"
+#include "../State.h"
+#include "Scene.h"
 
 using namespace lb;
 
-class GameScene : public Object {
+class GameScene : public Scene {
 private:
   const int HORIZONTAL_CELLS = DM.getHorizontalCells();
   const int VERTICAL_CELLS = DM.getVerticalCells();
+  const Vector CENTER = Vector(HORIZONTAL_CELLS / 2.0, VERTICAL_CELLS / 2.0);
   const Vector GAME_VELOCITY = Vector(-1, 0);
 
-  Bird *bird = new Bird();
-  Floor *floor = new Floor();
-  array<Pipe*, 3> pipes = { new Pipe(), new Pipe(), new Pipe() };
   const Sound* scoreSfx = RM.getSound("score");
   const Sound* gameOverSfx = RM.getSound("game-over");
 
-  Score *score = new Score();
-
-  void init() {
-    DM.setBackground(Color::BLUE);
-    score->init();
-
-    // In the following block we are placing objects in the scene.
-    const auto center =
-        Vector(HORIZONTAL_CELLS / 2.0, VERTICAL_CELLS / 2.0);
-
+  void makeScore() {
+    auto score = new Score();
+    STATE.reset();
     score->setPosition(Vector(HORIZONTAL_CELLS / 2, 8));
     score->setAltitude(4);
+  }
 
-    const auto birdBox = this->bird->getBox();
-    this->bird->setPosition(
-        center - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
-    this->bird->setAltitude(3);
+  void makeBird() {
+    auto bird = new Bird();
+    const auto birdBox = bird->getBox();
+    bird->setPosition(
+        CENTER - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
+    bird->setAltitude(3);
+  }
 
-    const auto DISTANCE = HORIZONTAL_CELLS / 3;
-    for (int i = 0; i < 3; i++) {
-      const auto pipe = this->pipes[i];
-      const auto pipeWidth = pipe->getBox().getWidth();
-      const auto pipePosition = Vector(HORIZONTAL_CELLS + i * (DISTANCE + pipeWidth/3), -32);
-      pipe->setPosition(pipePosition);
-      pipe->setVelocity(GAME_VELOCITY);
-      pipe->setAltitude(1);
-    }
+  const int PIPE_DISTANCE = HORIZONTAL_CELLS / 3;
+  void makePipe(int index) {
+    auto pipe = new Pipe();
+    const auto pipeWidth = pipe->getBox().getWidth();
+    const auto pipePosition = Vector(HORIZONTAL_CELLS + index * (PIPE_DISTANCE + pipeWidth / 3), -32);
+    pipe->setPosition(pipePosition);
+    pipe->setVelocity(GAME_VELOCITY);
+    pipe->setAltitude(1);
+  }
 
-    const auto floorPosition = Vector(0, VERTICAL_CELLS - this->floor->getBox().getHeight());
-    this->floor->setPosition(floorPosition);
-    this->floor->setVelocity(GAME_VELOCITY);
-    this->floor->setAltitude(2);
+  void makeFloor() {
+    auto floor = new Floor();
+    const auto floorPosition = Vector(0, VERTICAL_CELLS - floor->getBox().getHeight());
+    floor->setPosition(floorPosition);
+    floor->setVelocity(GAME_VELOCITY);
+    floor->setAltitude(2);
+  }
+
+  void play() override{
+    DM.setBackground(Color::BLUE);
+    makeBird();
+    makeFloor();
+    makePipe(0);
+    makePipe(1);
+    makePipe(2);
+    makeScore();
   }
 
 public:
-  GameScene(): Object("GameScene") {
+  GameScene(): Scene("GameScene") {
     subscribe(GAME_OVER_EVENT);
     subscribe(SCORE_EVENT);
-    init();
   }
 
   int eventHandler(const Event *event) override {
     if (event->getType() == GAME_OVER_EVENT) {
-      DM.setBackground(Color::RED);
       this->gameOverSfx->play();
-      GM.pause();
       return 1;
     }
 
     if (event->getType() == SCORE_EVENT) {
       this->scoreSfx->play();
+      STATE.increment();
+      return 1;
     }
 
     return 0;
   }
 
-  ~GameScene() {
-    WM.removeObject(this->bird);
-    WM.removeObject(this->floor);
-    for (auto pipe : this->pipes) {
-      WM.removeObject(pipe);
+  array<string, 4> CLEANUP_TYPES = {"Bird", "Floor", "Pipe", "Score"};
+  void cleanup() override {
+    auto os = WM.getAllObjects();
+    auto it = ObjectListIterator(&os);
+    for (it.first(); !it.isDone(); it.next()) {
+      auto o = it.currentObject();
+      for (auto type : CLEANUP_TYPES) {
+        if (o->getType() == type) {
+          WM.markForDelete(o);
+        }
+      }
     }
   };
 };

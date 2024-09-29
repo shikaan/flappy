@@ -2,12 +2,13 @@
 #include <latebit/core/events/EventOut.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
+#include <latebit/core/objects/WorldManager.h>
 #include <latebit/utils/Logger.h>
 #include <latebit/utils/Math.h>
 
 using namespace lb;
 
-class TopPipe : public Object {
+class TopPipe: public Object {
 public:
   TopPipe(): Object("TopPipe") {
     setSprite("top-pipe");
@@ -32,9 +33,9 @@ public:
     setPosition(Vector());
     setSolidness(Solidness::SOFT);
     
-    const auto pipeHeight = topPipe.getBox().getHeight();
+    const auto pipeHeight = topPipe->getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
-    const auto pipeWidth = topPipe.getBox().getWidth();
+    const auto pipeWidth = topPipe->getBox().getWidth();
     halfPipeHeight = pipeHeight / 2;
 
     setBox(Box(Vector(pipeWidth/2, 0), 1, totalPipeHeight));
@@ -48,28 +49,34 @@ public:
   }
 
   int setPosition(const Vector &position) {
-    topPipe.setPosition(position);
-    bottomPipe.setPosition(Vector(position.getX(), position.getY() + topPipe.getBox().getHeight() + GAP));
+    topPipe->setPosition(position);
+    bottomPipe->setPosition(Vector(position.getX(), position.getY() + topPipe->getBox().getHeight() + GAP));
     Object::setPosition(position);
     return 1;
   }
 
   int setVelocity(const Vector &velocity) {
-    topPipe.setVelocity(velocity);
-    bottomPipe.setVelocity(velocity);
+    topPipe->setVelocity(velocity);
+    bottomPipe->setVelocity(velocity);
     Object::setVelocity(velocity);
     return 1;
   }
 
   void setAltitude(int altitude) {
-    topPipe.setAltitude(altitude);
-    bottomPipe.setAltitude(altitude);
+    topPipe->setAltitude(altitude);
+    bottomPipe->setAltitude(altitude);
     Object::setAltitude(altitude);
   }
 
+  ~Pipe() {
+    WM.markForDelete(topPipe);
+    WM.markForDelete(bottomPipe);
+    Object::~Object();
+  }
+
 private:
-  TopPipe topPipe = TopPipe();
-  BottomPipe bottomPipe = BottomPipe();
+  TopPipe *topPipe = new TopPipe();
+  BottomPipe *bottomPipe = new BottomPipe();
   int halfPipeHeight = 0;
 
   int handleOut() {
