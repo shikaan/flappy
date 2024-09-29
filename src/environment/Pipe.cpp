@@ -25,19 +25,20 @@ public:
 
 class Pipe : public Object {
 public:
-  const int GAP = 42;
+  const int GAP = 40;
 
   Pipe(): Object("Pipe") {
     subscribe(OUT_EVENT);
     setPosition(Vector());
-    setSolidness(Solidness::SPECTRAL);
+    setSolidness(Solidness::SOFT);
+    setDebug(true);
     
     const auto pipeHeight = topPipe.getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
     const auto pipeWidth = topPipe.getBox().getWidth();
     halfPipeHeight = pipeHeight / 2;
 
-    setBox(Box(pipeWidth, totalPipeHeight));
+    setBox(Box(Vector(pipeWidth/2, 0), 1, totalPipeHeight));
   }
 
   int eventHandler(const Event *e) override {

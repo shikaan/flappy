@@ -2,6 +2,7 @@
 #include <latebit/core/graphics/DisplayManager.h>
 #include <latebit/core/objects/Object.h>
 #include <latebit/core/ResourceManager.h>
+#include <latebit/core/GameManager.h>
 
 #include <sstream>
 #include "../characters/Bird.cpp"
@@ -46,6 +47,24 @@ public:
     this->floor->setPosition(floorPosition);
     this->floor->setVelocity(GAME_VELOCITY);
     this->floor->setAltitude(2);
+
+
+    subscribe("GameOver");
+    subscribe("Score");
+  }
+
+  int eventHandler(const Event *event) override {
+    if (event->getType() == "GameOver") {
+      DM.setBackground(Color::RED);
+      GM.pause();
+      return 1;
+    }
+
+    if (event->getType() == "Score") {
+      Log.info("Scored!");
+    }
+
+    return 0;
   }
 
   ~GameScene() {
