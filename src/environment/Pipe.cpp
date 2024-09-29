@@ -25,7 +25,7 @@ public:
 
 class Pipe : public Object {
 public:
-  const int GAP = 40;
+  const int GAP = 36;
 
   Pipe(): Object("Pipe") {
     subscribe(OUT_EVENT);

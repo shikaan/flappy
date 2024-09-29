@@ -22,9 +22,10 @@ class Score : public Object {
   }
 
   int draw() override {
-    DM.drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
-    DM.drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
-    return 0;
+    int result = 0;
+    result += DM.drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
+    result += DM.drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
+    return result;
   }
   
   void init() {

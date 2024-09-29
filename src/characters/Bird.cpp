@@ -25,6 +25,11 @@ public:
     subscribe(INPUT_EVENT);
     subscribe(STEP_EVENT);
     subscribe(COLLISION_EVENT);
+
+    const auto width = getBox().getWidth();
+    const auto height = getBox().getHeight();
+
+    setBox(Box(Vector(3, 3), width-6, height-6));
   }
 
   int eventHandler(const Event *event) override {
