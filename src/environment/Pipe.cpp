@@ -31,7 +31,6 @@ public:
     subscribe(OUT_EVENT);
     setPosition(Vector());
     setSolidness(Solidness::SOFT);
-    setDebug(true);
     
     const auto pipeHeight = topPipe.getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
