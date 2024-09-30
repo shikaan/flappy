@@ -37,7 +37,6 @@ public:
     bird->setVelocity(Vector(0, 0));
 
     (new Text("Start", "Press START", TextOptions{
-      .size = TextSize::NORMAL,
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
       .shadow = Color::BLACK
