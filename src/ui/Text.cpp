@@ -27,7 +27,19 @@ public:
 
     if (options.background != Color::UNDEFINED_COLOR) {
       auto size = DM.measureString(text, options.size);
-      result += DM.drawRectangle(getPosition(), size.getWidth(), size.getHeight(), options.background, options.background);
+      size.setHeight(size.getHeight() + options.size*2);
+      size.setWidth(size.getWidth() + options.size*4);
+
+      auto position = getPosition();
+      if (options.alignment == TextAlignment::CENTER) {
+        position.setX(position.getX() - size.getWidth() / 2);
+      } else if (options.alignment == TextAlignment::RIGHT) {
+        position.setX(position.getX() - size.getWidth());
+      }
+
+      position.setY(position.getY() - options.size);
+
+      result += DM.drawRectangle(position, size.getWidth(), size.getHeight(), options.background, options.background);
     }
 
     if (options.shadow != Color::UNDEFINED_COLOR) {

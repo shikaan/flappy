@@ -26,10 +26,16 @@ public:
 
   void play() override {
     DM.setBackground(Color::BLUE);
+    auto floorSprite = RM.getSprite("floor");
+    new Floor(Vector(0, VERTICAL_CELLS - floorSprite->getHeight()));
+
+    auto backgroundSprite = RM.getSprite("background");
+    auto background = new Background(Vector(0, VERTICAL_CELLS - backgroundSprite->getHeight() - floorSprite->getHeight()));
+    background->setAltitude(0);
+
     auto logo = new Logo();
     const auto logoBox = logo->getBox();
     logo->setPosition(Vector(HORIZONTAL_CELLS / 2 - logoBox.getWidth() / 2, 24));
-
 
     auto bird = new Bird();
     const auto birdBox = bird->getBox();
@@ -39,15 +45,9 @@ public:
     (new Text("Start", "Press START", TextOptions{
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
+      .background = Color::DARK_BLUE,
       .shadow = Color::BLACK
     }))->setPosition(Vector(HORIZONTAL_CELLS / 2, 96));
-
-    makeFloor();
-  }
-
-  void makeFloor() {
-    auto floorSprite = RM.getSprite("floor");
-    new Floor(Vector(0, VERTICAL_CELLS - floorSprite->getHeight()));
   }
 
   int eventHandler(const Event *event) override {

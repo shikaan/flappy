@@ -19,6 +19,7 @@ int main() {
   RM.loadTextSprite("assets/sprites/bottom-pipe.lbspr", "bottom-pipe");
   RM.loadTextSprite("assets/sprites/top-pipe.lbspr", "top-pipe");
   RM.loadTextSprite("assets/sprites/logo.lbspr", "logo");
+  RM.loadTextSprite("assets/sprites/background.lbspr", "background");
   RM.loadSound("assets/audio/dash.lbsfx", "dash");
   RM.loadSound("assets/audio/score.lbsfx", "score");
   RM.loadSound("assets/audio/gameover.lbsfx", "game-over");

@@ -62,6 +62,21 @@ private:
     floor->setAltitude(2);
   }
 
+  void makeBackground() {
+    auto backgrounds = WM.objectsOfType("Background");
+    auto it = ObjectListIterator(&backgrounds);
+    auto background = static_cast<Background*>(it.currentObject());
+
+    if (background == nullptr) {
+      auto floorSprite = RM.getSprite("floor");
+      auto backgroundSprite = RM.getSprite("background");
+      background = new Background(Vector(0, VERTICAL_CELLS - backgroundSprite->getHeight() - floorSprite->getHeight()));
+    }
+
+    background->setVelocity(Vector(-0.1, 0));
+    background->setAltitude(0);
+  }
+
   void play() override{
     DM.setBackground(Color::BLUE);
     makePipe(0);
@@ -70,6 +85,7 @@ private:
     makeScore();
     makeBird();
     makeFloor();
+    makeBackground();
   }
 
 public:
@@ -93,7 +109,7 @@ public:
     return 0;
   }
 
-  array<string, 4> CLEANUP_TYPES = {"Bird", "Floor", "Pipe", "Score"};
+  array<string, 5> CLEANUP_TYPES = {"Bird", "Floor", "Pipe", "Score", "Background"};
   void cleanup() override {
     auto os = WM.getAllObjects();
     auto it = ObjectListIterator(&os);
