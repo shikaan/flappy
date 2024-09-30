@@ -1,6 +1,7 @@
 #include <latebit/core/graphics/DisplayManager.h>
 #include <latebit/core/objects/Object.h>
 #include <latebit/core/events/EventInput.h>
+#include <latebit/core/events/EventStep.h>
 #include <latebit/core/objects/WorldManager.h>
 #include <latebit/utils/Logger.h>
 
@@ -14,24 +15,31 @@ class GameOverScene : public Scene {
 private:
   const int HORIZONTAL_CELLS = DM.getHorizontalCells();
   const int VERTICAL_CELLS = DM.getVerticalCells();
+  int stepsSinceStart = 0;
 
 public:
   GameOverScene(): Scene("GameOverScene") {
     subscribe(INPUT_EVENT);
+    subscribe(STEP_EVENT);
   }
 
   void play() override {
     DM.setBackground(Color::DARK_BLUE);
+    stepsSinceStart = 0;
   }
 
   int eventHandler(const Event *event) override {
-    if (event->getType() == INPUT_EVENT) {
+    if (event->getType() == INPUT_EVENT && stepsSinceStart > 60) {
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
 
       if (inputEvent->getKey() == InputKey::START && inputEvent->getAction() == InputAction::PRESSED) {
         WM.onEvent(new EventGameStart());
         return 1;
       }
+    }
+
+    if (event->getType() == STEP_EVENT) {
+      stepsSinceStart++;
     }
 
     return 0;
@@ -60,7 +68,9 @@ public:
     result += DM.drawString(center + Vector(0, 24), highScore, TextAlignment::CENTER, Color::DARK_BLUE, TextSize::LARGE);
     result += DM.drawString(center + Vector(0, 24) + Vector(1,1), highScore, TextAlignment::CENTER, Color::WHITE, TextSize::LARGE);
 
-    result += DM.drawString(center + Vector(0, 56), "PRESS START", TextAlignment::CENTER, Color::WHITE, TextSize::NORMAL);
+    if (stepsSinceStart > 60) {
+      result += DM.drawString(center + Vector(0, 56), "Press START to restart", TextAlignment::CENTER, Color::WHITE, TextSize::NORMAL);
+    }
 
     return result;
   }

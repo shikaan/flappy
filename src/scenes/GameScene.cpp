@@ -5,7 +5,7 @@
 #include <latebit/core/GameManager.h>
 
 #include <sstream>
-#include "../characters/Bird.cpp"
+#include "../characters/characters.h"
 #include "../environment/environment.h"
 #include "../ui/ui.h"
 #include "../State.h"
@@ -49,21 +49,27 @@ private:
   }
 
   void makeFloor() {
-    auto floor = new Floor();
-    const auto floorPosition = Vector(0, VERTICAL_CELLS - floor->getBox().getHeight());
-    floor->setPosition(floorPosition);
+    auto floors = WM.objectsOfType("Floor");
+    auto it = ObjectListIterator(&floors);
+    auto floor = static_cast<Floor*>(it.currentObject());
+
+    if (floor == nullptr) {
+      auto floorSprite = RM.getSprite("floor");
+      floor = new Floor(Vector(0, VERTICAL_CELLS - floorSprite->getHeight()));
+    }
+
     floor->setVelocity(GAME_VELOCITY);
     floor->setAltitude(2);
   }
 
   void play() override{
     DM.setBackground(Color::BLUE);
-    makeBird();
-    makeFloor();
     makePipe(0);
     makePipe(1);
     makePipe(2);
     makeScore();
+    makeBird();
+    makeFloor();
   }
 
 public:

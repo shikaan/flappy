@@ -3,6 +3,7 @@
 
 #include "GameScene.cpp"
 #include "GameOverScene.cpp"
+#include "GameStartScene.cpp"
 
 using namespace lb;
 
@@ -11,15 +12,16 @@ public:
 
   GameScene *game = new GameScene();
   GameOverScene *gameOver = new GameOverScene();
+  GameStartScene *gameStart = new GameStartScene();
   Scene *currentScene = nullptr;
 
   SceneManager(): Object("SceneManager") {
-    game->setActive(false);
-    gameOver->setActive(false);
     subscribe(GAME_START_EVENT);
     subscribe(GAME_OVER_EVENT);
 
-    WM.onEvent(new EventGameStart());
+    game->setActive(false);
+    gameOver->setActive(false);
+    switchScene(gameStart);
   }
 
   int eventHandler(const Event *e) {

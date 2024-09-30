@@ -11,28 +11,34 @@ using namespace lb;
 
 class Tile : public Object {
 public:
-  Tile(): Object("Tile") {
+  Tile(const Vector position): Object("Tile") {
     setSprite("floor");
     setSolidness(Solidness::SOFT);
+    setPosition(position);
   }
 };
 
 class Floor : public Object {
 private:
   int tileWidth = 0;
+  ObjectList tiles = {};
 
 public:
-  Floor(): Object("Floor") {
-    const auto tile = new Tile();
+  Floor(const Vector position): Object("Floor") {
+    this->setPosition(position);
+    const auto tile = new Tile(position);
+    this->tiles.insert(tile);
+
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
     const auto tiles = int(DM.getHorizontalCells() / tileWidth) + 1;
 
-    for (int i = 1; i <= tiles; i++) new Tile();
-    this->draw();
-
+    for (int i = 1; i <= tiles; i++) {
+      auto t = new Tile(Vector(i * tileWidth + position.getX(), position.getY()));
+      this->tiles.insert(t);
+    }
+    
     setBox(Box(DM.getHorizontalCells()*2, tileHeight));
-
     subscribe(STEP_EVENT);
   }
 
@@ -51,7 +57,7 @@ public:
     auto result = 0;
     int count = 0;
 
-    auto tiles = tilesIterator();
+    auto tiles = ObjectListIterator(&this->tiles);
     for (tiles.first(), count = 0; !tiles.isDone(); tiles.next(), count++) {
       auto tile = tiles.currentObject();
       tile->setPosition(Vector(count * tileWidth + x, y));
@@ -62,7 +68,7 @@ public:
   }
 
   void setAltitude(int altitude) {
-    auto tiles = tilesIterator();
+    auto tiles = ObjectListIterator(&this->tiles);
     for (tiles.first(); !tiles.isDone(); tiles.next()) {
       tiles.currentObject()->setAltitude(altitude);
     }
@@ -70,18 +76,14 @@ public:
   }
 
   ~Floor() {
-    auto tiles = tilesIterator();
+    auto tiles = ObjectListIterator(&this->tiles);
     for (tiles.first(); !tiles.isDone(); tiles.next()) {
-      WM.markForDelete(tiles.currentObject());
+      auto tile = tiles.currentObject();
+      WM.markForDelete(tile);
     }
   }
 
 private:
-  auto tilesIterator() -> ObjectListIterator {
-    ObjectList tiles = WM.objectsOfType("Tile");
-    return ObjectListIterator(&tiles);
-  }
-
   int reposition() {
     const auto position = getPosition();
     const auto y = position.getY();
