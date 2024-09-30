@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>FlappyBird</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
+
+  <style>
+    /* RESET */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    * {
+      margin: 0;
+    }
+
+    img,
+    picture,
+    video,
+    canvas,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    input,
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      overflow-wrap: break-word;
+    }
+  </style>
+  <style>
+    :root {
+      --black: #000000;
+      --dark-blue: #1D2B53;
+      --dark-purple: #7E2553;
+      --dark-green: #008751;
+      --brown: #AB5236;
+      --dark-gray: #5F574F;
+      --light-gray: #C2C3C7;
+      --white: #FFF1E8;
+      --red: #FF004D;
+      --orange: #FFA300;
+      --yellow: #FFEC27;
+      --green: #00E436;
+      --blue: #29ADFF;
+      --indigo: #83769C;
+      --pink: #FF77A8;
+      --peach: #FFCCAA;
+      /* size */
+      --half: 4px;
+      --size: 8px;
+      --size-2: calc(var(--size) * 2);
+      --size-3: calc(var(--size) * 3);
+      --size-4: calc(var(--size) * 4);
+      --size-8: calc(var(--size) * 8);
+      --size-12: calc(var(--size) * 12);
+      --size-14: calc(var(--size) * 14);
+      --size-16: calc(var(--size) * 16);
+      --size-18: calc(var(--size) * 18);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--black);
+      font-family: monospace;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--white);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--size-2) var(--size-8);
+      background-color: var(--blue);
+      color: var(--white);
+      border-bottom: var(--size) solid var(--dark-blue);
+
+      font-size: var(--size-3);
+      text-transform: uppercase;
+      font-weight: bolder;
+    }
+
+    main {
+      width: 720px;
+      margin: 0 auto;
+    }
+
+    .screen {
+      position: relative;
+      width: 720px;
+      height: 480px;
+      aspect-ratio: 16 / 9;
+
+      background-color: var(--black);
+      border-radius: var(--half);
+      overflow: hidden;
+
+      .intro {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        justify-content: space-evenly;
+        padding: var(--size-8);
+        background-color: var(--light-gray);
+
+        .logo {
+          padding-bottom: var(--size-4);
+        }
+
+        .progress {
+          border-radius: 0;
+          width: calc(var(--size) * 32);
+          height: var(--size-4);
+          border: var(--size) solid var(--dark-blue);
+          box-shadow: var(--dark-gray) 0px var(--half) 0px 0px;
+          background-color: var(--white);
+
+          .bar {
+            height: 100%;
+            background-color: var(--blue);
+            width: 0%;
+            transition: width 1s ease-in-out;
+          }
+        }
+      }
+
+      .welcome {
+        .start {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(.75);
+          border: var(--size) solid var(--dark-purple);
+          height: var(--size-14);
+          width: var(--size-18);
+          background: url('assets/play.png') no-repeat center;
+          background-color: var(--red);
+          cursor: pointer;
+
+          &:hover {
+            transform: translate(-50%, -50%) scale(1);
+          }
+
+          &:active {
+            transform: translate(-50%, -50%) scale(.75);
+          }
+        }
+      }
+    }
+
+    .description {
+      padding: var(--size-8) 0;
+      font-size: var(--size-2);
+      line-height: 1.5;
+    }
+
+    h1 {
+      padding: var(--size-8) 0 var(--size-4) 0;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="https://github.com/latebit/latebit-engine" target="_blank">
+      <img src="assets/logo.png" />
+    </a>
+    <a href="https://github.com/latebit/latebit-template" target="_blank">
+      MAKE A GAME
+    </a>
+  </nav>
+
+  <main>
+    <h1>FlappyBird</h1>
+    <section class="screen">
+      <canvas id="canvas" class="canvas hidden" oncontextmenu="event.preventDefault()"></canvas>
+      <div class="intro hidden">
+        <img class="logo" src="./assets/logo.png" />
+        <img class="animation" src="./assets/latebit.gif" />
+        <div class="progress">
+          <div class="bar"></div>
+        </div>
+      </div>
+      <div class="welcome">
+        <button class="start"></button>
+      </div>
+    </section>
+    <section class="description">
+      <p></p>
+    </section>
+  </main>
+
+  <audio src="assets/start.aac" preload="auto"></audio>
+
+  <script>
+    const $canvas = document.getElementById('canvas');
+    const $start = document.querySelector('.start');
+    const $intro = document.querySelector('.intro');
+    const $progress = document.querySelector('.progress');
+    const $bar = document.querySelector('.bar');
+    const $audio = document.querySelector('audio');
+
+    const hide = (element) => element.classList.add('hidden');
+    const show = (element) => element.classList.remove('hidden');
+
+    // Updates the progress bar
+    const setProgress = (value, max) => {
+      $bar.style.width = `${(value / max) * 100}%`;
+    };
+
+    let totalDependencies = 0;
+    // This tracks the time when the user clicks on "play"
+    // It's used to ensure the loading screen is shown for at least 2 seconds
+    let startTime = 0;
+
+    // Emscripten Module
+    window.Module = {
+      canvas: $canvas,
+      onRuntimeInitialized: () => {
+        setProgress(1, 1);
+
+        // Makes sure the loading screen is shown for at least 2 seconds
+        const waitTime = 5000 - (Date.now() - startTime);
+
+        setTimeout(() => {
+          Module.callMain();
+          hide($intro);
+          show($canvas);
+        }, waitTime);
+      },
+      noInitialRun: true,
+      monitorRunDependencies: (left) => {
+        totalDependencies = Math.max(totalDependencies ?? 0, left);
+
+        // This has to have this format. Other messages coming from emscripten have the same format.
+        Module.setStatus(left
+          ? `Preparing... (${totalDependencies - left}/${totalDependencies})`
+          : 'All downloads complete.');
+      },
+      setStatus: (text) => {
+        if (text === Module.setStatus.text) return;
+
+        const [, label, value, _, max] = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/) ?? [];
+        setProgress(Number.parseInt(value), Number.parseInt(max));
+      },
+    };
+
+    Module.setStatus('Downloading...');
+
+    $start.addEventListener('click', () => {
+      hide($start);
+      $audio.play();
+      const script = document.createElement('script');
+      script.src = 'index.js';
+      document.body.appendChild(script);
+      startTime = Date.now();
+      show($intro);
+    });
+  </script>
+</body>
+
+</html>
