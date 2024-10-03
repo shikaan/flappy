@@ -26,7 +26,7 @@ public:
 
 class Pipe : public Object {
 public:
-  const int GAP = 36;
+  const int GAP = 44;
 
   Pipe(): Object("Pipe") {
     subscribe(OUT_EVENT);
@@ -83,7 +83,7 @@ private:
     const auto position = getPosition();
     const auto random = rand();
     const int y = position.getY() + (random % 10) * (random % 2 == 0 ? 1 : -1);
-    setPosition(Vector(DM.getHorizontalCells(), clamp(y, -halfPipeHeight, 0)));
+    setPosition(Vector(DM::WINDOW_WIDTH, clamp(y, -halfPipeHeight, 0)));
     return 1;
   }
 };

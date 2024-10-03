@@ -9,13 +9,14 @@ class Score : public Object {
   public:
   Score(): Object("Score") {
     subscribe(SCORE_EVENT);
+    setSolidness(Solidness::SPECTRAL);
   }
 
   int draw() override {
     const int currentScore = STATE.getScore();
     int result = 0;
-    result += DM.drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
-    result += DM.drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
+    result += DM::drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
+    result += DM::drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
     return result;
   }
 };

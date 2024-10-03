@@ -7,7 +7,6 @@
 #include <latebit/utils/Logger.h>
 
 #include "../events/events.h"
-#include "../environment/environment.h"
 #include "../ui/ui.h"
 #include "../characters/characters.h"
 #include "Scene.h"
@@ -16,38 +15,34 @@ using namespace lb;
 
 class GameStartScene : public Scene {
 private:
-  const int HORIZONTAL_CELLS = DM.getHorizontalCells();
-  const int VERTICAL_CELLS = DM.getVerticalCells();
-
 public:
   GameStartScene(): Scene("GameStartScene") {
     subscribe(INPUT_EVENT);
   }
 
   void play() override {
-    DM.setBackground(Color::BLUE);
+    DM::setBackground(Color::BLUE);
     auto floorSprite = RM.getSprite("floor");
-    new Floor(Vector(0, VERTICAL_CELLS - floorSprite->getHeight()));
+    new Floor(Vector(0, DM::WINDOW_HEIGHT - floorSprite->getHeight()));
 
     auto backgroundSprite = RM.getSprite("background");
-    auto background = new Background(Vector(0, VERTICAL_CELLS - backgroundSprite->getHeight() - floorSprite->getHeight()));
+    auto background = new Background(Vector(0, DM::WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()));
     background->setAltitude(0);
 
     auto logo = new Logo();
     const auto logoBox = logo->getBox();
-    logo->setPosition(Vector(HORIZONTAL_CELLS / 2 - logoBox.getWidth() / 2, 24));
+    logo->setPosition(Vector(DM::WINDOW_WIDTH / 2 - logoBox.getWidth() / 2, 24));
 
     auto bird = new Bird();
     const auto birdBox = bird->getBox();
-    bird->setPosition(Vector(HORIZONTAL_CELLS / 2 - birdBox.getWidth() / 2, 72));
-    bird->setVelocity(Vector(0, 0));
+    bird->setPosition(Vector(DM::WINDOW_WIDTH / 2 - birdBox.getWidth() / 2, 72));
 
     (new Text("Start", "Press START", TextOptions{
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
       .background = Color::DARK_BLUE,
       .shadow = Color::BLACK
-    }))->setPosition(Vector(HORIZONTAL_CELLS / 2, 96));
+    }))->setPosition(Vector(DM::WINDOW_WIDTH / 2, 96));
   }
 
   int eventHandler(const Event *event) override {

@@ -31,14 +31,14 @@ public:
 
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
-    const auto tiles = int(DM.getHorizontalCells() / tileWidth) + 1;
+    const auto tiles = int(DM::WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
       auto t = new Tile(Vector(i * tileWidth + position.getX(), position.getY()));
       this->tiles.insert(t);
     }
     
-    setBox(Box(DM.getHorizontalCells()*2, tileHeight));
+    setBox(Box(DM::WINDOW_WIDTH*2, tileHeight));
     subscribe(STEP_EVENT);
   }
 

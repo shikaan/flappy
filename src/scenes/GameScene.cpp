@@ -4,7 +4,6 @@
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/GameManager.h>
 
-#include <sstream>
 #include "../characters/characters.h"
 #include "../environment/environment.h"
 #include "../ui/ui.h"
@@ -15,9 +14,7 @@ using namespace lb;
 
 class GameScene : public Scene {
 private:
-  const int HORIZONTAL_CELLS = DM.getHorizontalCells();
-  const int VERTICAL_CELLS = DM.getVerticalCells();
-  const Vector CENTER = Vector(HORIZONTAL_CELLS / 2.0, VERTICAL_CELLS / 2.0);
+  const Vector CENTER = Vector(DM::WINDOW_WIDTH / 2.0, DM::WINDOW_HEIGHT / 2.0);
   const Vector GAME_VELOCITY = Vector(-1, 0);
 
   const Sound* scoreSfx = RM.getSound("score");
@@ -26,7 +23,7 @@ private:
   void makeScore() {
     auto score = new Score();
     STATE.reset();
-    score->setPosition(Vector(HORIZONTAL_CELLS / 2, 8));
+    score->setPosition(Vector(DM::WINDOW_WIDTH / 2, 8));
     score->setAltitude(4);
   }
 
@@ -36,26 +33,27 @@ private:
     bird->setPosition(
         CENTER - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
     bird->setAltitude(3);
+    bird->setAcceleration(Vector(0, 0.1));
   }
 
-  const int PIPE_DISTANCE = HORIZONTAL_CELLS / 3;
+  const int PIPE_DISTANCE = DM::WINDOW_WIDTH / 3;
   void makePipe(int index) {
     auto pipe = new Pipe();
     const auto pipeWidth = pipe->getBox().getWidth();
-    const auto pipePosition = Vector(HORIZONTAL_CELLS + index * (PIPE_DISTANCE + pipeWidth / 3), -32);
+    const auto pipePosition = Vector(DM::WINDOW_WIDTH + index * (PIPE_DISTANCE + pipeWidth / 3), -16);
     pipe->setPosition(pipePosition);
     pipe->setVelocity(GAME_VELOCITY);
     pipe->setAltitude(1);
   }
 
   void makeFloor() {
-    auto floors = WM.objectsOfType("Floor");
+    auto floors = WM.getAllObjectsByType("Floor");
     auto it = ObjectListIterator(&floors);
     auto floor = static_cast<Floor*>(it.currentObject());
 
     if (floor == nullptr) {
       auto floorSprite = RM.getSprite("floor");
-      floor = new Floor(Vector(0, VERTICAL_CELLS - floorSprite->getHeight()));
+      floor = new Floor(Vector(0, DM::WINDOW_HEIGHT - floorSprite->getHeight()));
     }
 
     floor->setVelocity(GAME_VELOCITY);
@@ -63,14 +61,14 @@ private:
   }
 
   void makeBackground() {
-    auto backgrounds = WM.objectsOfType("Background");
+    auto backgrounds = WM.getAllObjectsByType("Background");
     auto it = ObjectListIterator(&backgrounds);
     auto background = static_cast<Background*>(it.currentObject());
 
     if (background == nullptr) {
       auto floorSprite = RM.getSprite("floor");
       auto backgroundSprite = RM.getSprite("background");
-      background = new Background(Vector(0, VERTICAL_CELLS - backgroundSprite->getHeight() - floorSprite->getHeight()));
+      background = new Background(Vector(0, DM::WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()));
     }
 
     background->setVelocity(Vector(-0.1, 0));
@@ -78,7 +76,7 @@ private:
   }
 
   void play() override{
-    DM.setBackground(Color::BLUE);
+    DM::setBackground(Color::BLUE);
     makePipe(0);
     makePipe(1);
     makePipe(2);
