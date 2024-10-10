@@ -2,7 +2,7 @@
 #include <latebit/core/events/EventOut.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/utils/Logger.h>
 #include <latebit/utils/Math.h>
 
@@ -68,15 +68,14 @@ public:
     Object::setAltitude(altitude);
   }
 
-  ~Pipe() {
-    WM.markForDelete(topPipe);
-    WM.markForDelete(bottomPipe);
-    Object::~Object();
+  void teardown() override {
+    WM::markForDelete(topPipe);
+    WM::markForDelete(bottomPipe);
   }
 
 private:
-  TopPipe *topPipe = new TopPipe();
-  BottomPipe *bottomPipe = new BottomPipe();
+  TopPipe *topPipe = WM::create<TopPipe>();
+  BottomPipe *bottomPipe = WM::create<BottomPipe>();
   int halfPipeHeight = 0;
 
   int handleOut() {

@@ -2,7 +2,7 @@
 #include <latebit/core/objects/Object.h>
 #include <latebit/core/events/EventInput.h>
 #include <latebit/core/events/EventStep.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/utils/Logger.h>
 
 #include "../events/events.h"
@@ -31,7 +31,7 @@ public:
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
 
       if (inputEvent->getKey() == InputKey::START && inputEvent->getAction() == InputAction::PRESSED) {
-        WM.onEvent(new EventGameStart());
+        WM::broadcast(make_unique<EventGameStart>().get());
         return 1;
       }
     }

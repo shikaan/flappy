@@ -1,7 +1,6 @@
 #include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/ObjectList.h>
-#include <latebit/core/objects/ObjectListIterator.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/objects/ObjectUtils.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
@@ -21,21 +20,21 @@ public:
 class Background : public Object {
 private:
   int tileWidth = 0;
-  ObjectList tiles = {};
+  vector<Object*> tiles = {};
 
 public:
   Background(const Vector position): Object("Background") {
     this->setPosition(position);
-    const auto tile = new BackgroundTile(position);
-    this->tiles.insert(tile);
+    const auto tile = WM::create<BackgroundTile>(position);
+    insert(this->tiles, tile);
 
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
     const auto tiles = int(DM::WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
-      auto t = new BackgroundTile(Vector(i * tileWidth + position.getX(), position.getY()));
-      this->tiles.insert(t);
+      auto t = WM::create<BackgroundTile>(Vector(i * tileWidth + position.getX(), position.getY()));
+      insert(this->tiles, t);
     }
     
     setBox(Box(DM::WINDOW_HEIGHT*2, tileHeight));
@@ -58,30 +57,27 @@ public:
     auto result = 0;
     int count = 0;
 
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(), count = 0; !tiles.isDone(); tiles.next(), count++) {
-      auto tile = tiles.currentObject();
+    for (auto tile : this->tiles) {
       tile->setPosition(Vector(count * tileWidth + x, y));
       result += tile->draw();
+      count++;
     }
 
     return this->Object::draw() + result;
   }
 
   void setAltitude(int altitude) {
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(); !tiles.isDone(); tiles.next()) {
-      tiles.currentObject()->setAltitude(altitude);
+    for (auto tile : this->tiles) {
+      tile->setAltitude(altitude);
     }
     Object::setAltitude(altitude);
   }
 
-  ~Background() {
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(); !tiles.isDone(); tiles.next()) {
-      auto tile = tiles.currentObject();
-      WM.markForDelete(tile);
+  void teardown () override {
+    for (auto tile : this->tiles) {
+      WM::markForDelete(tile);
     }
+    tiles.clear();
   }
 
 private:

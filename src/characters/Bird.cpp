@@ -4,10 +4,9 @@
 #include <latebit/core/events/EventInput.h>
 #include <latebit/core/events/EventCollision.h>
 #include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/utils/Logger.h>
-#include <latebit/core/objects/WorldManager.h>
 #include <latebit/core/utils/utils.h>
 
 #include "../events/events.h"
@@ -94,7 +93,7 @@ private:
     if (isScoring && scoringPipe && !intersects(getWorldBox(), scoringPipe->getWorldBox())) {
       isScoring = false;
       scoringPipe = nullptr;
-      WM.onEvent(new EventScore());
+      WM::broadcast(make_unique<EventScore>().get());
       return 1;
     }
 
@@ -113,7 +112,7 @@ private:
 
     for (const auto& deadlyObject : DEADLY_OBJECTS) {
       if (other->getType() == deadlyObject) {
-        WM.onEvent(new EventGameOver());
+        WM::broadcast(make_unique<EventGameOver>().get());
         return 1;
       }
     }

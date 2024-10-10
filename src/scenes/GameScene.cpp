@@ -3,6 +3,7 @@
 #include <latebit/core/objects/Object.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/GameManager.h>
+#include <latebit/core/world/WorldManager.h>
 
 #include "../characters/characters.h"
 #include "../environment/environment.h"
@@ -13,7 +14,7 @@
 using namespace lb;
 
 class GameScene : public Scene {
-private:
+public:
   const Vector CENTER = Vector(DM::WINDOW_WIDTH / 2.0, DM::WINDOW_HEIGHT / 2.0);
   const Vector GAME_VELOCITY = Vector(-1, 0);
 
@@ -21,15 +22,15 @@ private:
   const Sound* gameOverSfx = RM.getSound("game-over");
 
   void makeScore() {
-    auto score = new Score();
+    auto score = WM::create<Score>();
     STATE.reset();
     score->setPosition(Vector(DM::WINDOW_WIDTH / 2, 8));
     score->setAltitude(4);
   }
 
   void makeBird() {
-    auto bird = new Bird();
-    const auto birdBox = bird->getBox();
+    Bird* bird = WM::create<Bird>();
+    auto birdBox = bird->getBox();
     bird->setPosition(
         CENTER - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
     bird->setAltitude(3);
@@ -38,7 +39,7 @@ private:
 
   const int PIPE_DISTANCE = DM::WINDOW_WIDTH / 3;
   void makePipe(int index) {
-    auto pipe = new Pipe();
+    auto pipe = WM::create<Pipe>();
     const auto pipeWidth = pipe->getBox().getWidth();
     const auto pipePosition = Vector(DM::WINDOW_WIDTH + index * (PIPE_DISTANCE + pipeWidth / 3), -16);
     pipe->setPosition(pipePosition);
@@ -47,13 +48,14 @@ private:
   }
 
   void makeFloor() {
-    auto floors = WM.getAllObjectsByType("Floor");
-    auto it = ObjectListIterator(&floors);
-    auto floor = static_cast<Floor*>(it.currentObject());
-
-    if (floor == nullptr) {
+    auto floors = WM::getAllObjectsByType("Floor");
+    Floor* floor = nullptr;
+    
+    if (floors.empty()) {
       auto floorSprite = RM.getSprite("floor");
-      floor = new Floor(Vector(0, DM::WINDOW_HEIGHT - floorSprite->getHeight()));
+      floor = WM::create<Floor>(Vector(0, DM::WINDOW_HEIGHT - floorSprite->getHeight()));
+    } else {
+      floor = static_cast<Floor*>(floors[0]);
     }
 
     floor->setVelocity(GAME_VELOCITY);
@@ -61,21 +63,22 @@ private:
   }
 
   void makeBackground() {
-    auto backgrounds = WM.getAllObjectsByType("Background");
-    auto it = ObjectListIterator(&backgrounds);
-    auto background = static_cast<Background*>(it.currentObject());
+    auto backgrounds = WM::getAllObjectsByType("Background");
+    Background* background = nullptr;
 
-    if (background == nullptr) {
+    if (backgrounds.empty()) {
       auto floorSprite = RM.getSprite("floor");
       auto backgroundSprite = RM.getSprite("background");
-      background = new Background(Vector(0, DM::WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()));
+      background = WM::create<Background>(Vector(0, DM::WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()));
+    } else {
+      background = static_cast<Background*>(backgrounds[0]);
     }
 
     background->setVelocity(Vector(-0.1, 0));
     background->setAltitude(0);
   }
 
-  void play() override{
+  void play() override {
     DM::setBackground(Color::BLUE);
     makePipe(0);
     makePipe(1);
@@ -86,7 +89,6 @@ private:
     makeBackground();
   }
 
-public:
   GameScene(): Scene("GameScene") {
     subscribe(GAME_OVER_EVENT);
     subscribe(SCORE_EVENT);
@@ -109,13 +111,11 @@ public:
 
   array<string, 5> CLEANUP_TYPES = {"Bird", "Floor", "Pipe", "Score", "Background"};
   void cleanup() override {
-    auto os = WM.getAllObjects();
-    auto it = ObjectListIterator(&os);
-    for (it.first(); !it.isDone(); it.next()) {
-      auto o = it.currentObject();
+    auto os = WM::getAllObjects();
+    for (auto& o : os) {
       for (auto type : CLEANUP_TYPES) {
         if (o->getType() == type) {
-          WM.markForDelete(o);
+          WM::markForDelete(o);
         }
       }
     }

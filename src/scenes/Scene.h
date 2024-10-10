@@ -7,4 +7,5 @@ class Scene : public lb::Object {
     Scene(const std::string &type) : lb::Object(type) {}
     virtual void play() = 0;
     virtual void cleanup() = 0;
+    virtual ~Scene() = default;
 };

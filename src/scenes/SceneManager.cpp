@@ -9,10 +9,9 @@ using namespace lb;
 
 class SceneManager : public Object {
 public:
-
-  GameScene *game = new GameScene();
-  GameOverScene *gameOver = new GameOverScene();
-  GameStartScene *gameStart = new GameStartScene();
+  GameScene *game = WM::create<GameScene>();
+  GameOverScene *gameOver = WM::create<GameOverScene>();
+  GameStartScene *gameStart = WM::create<GameStartScene>();
   Scene *currentScene = nullptr;
 
   SceneManager(): Object("SceneManager") {

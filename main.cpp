@@ -1,5 +1,4 @@
 #include "src/scenes/scenes.h"
-#include "src/events/events.h"
 
 #include <latebit/core/configuration/Configuration.h>
 #include <latebit/core/GameManager.h>
@@ -24,9 +23,8 @@ int main() {
   RM.loadSound("assets/audio/score.lbsfx", "score");
   RM.loadSound("assets/audio/gameover.lbsfx", "game-over");
 
-  auto scene = new SceneManager();
+  WM::create<SceneManager>();
   GM.run();
-  delete scene;
 
   return 0;
 }

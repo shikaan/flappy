@@ -1,7 +1,6 @@
 #include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/ObjectList.h>
-#include <latebit/core/objects/ObjectListIterator.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/objects/ObjectUtils.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
@@ -21,21 +20,22 @@ public:
 class Floor : public Object {
 private:
   int tileWidth = 0;
-  ObjectList tiles = {};
+  vector<Object*> tiles = {};
 
 public:
   Floor(const Vector position): Object("Floor") {
+    this->setSolidness(Solidness::SOFT);
     this->setPosition(position);
-    const auto tile = new Tile(position);
-    this->tiles.insert(tile);
+    auto tile = WM::create<Tile>(position);
+    insert(this->tiles, tile);
 
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
     const auto tiles = int(DM::WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
-      auto t = new Tile(Vector(i * tileWidth + position.getX(), position.getY()));
-      this->tiles.insert(t);
+      auto t = WM::create<Tile>(Vector(i * tileWidth + position.getX(), position.getY()));
+      insert(this->tiles, t);
     }
     
     setBox(Box(DM::WINDOW_WIDTH*2, tileHeight));
@@ -50,36 +50,27 @@ public:
     return 0;
   }
 
-  auto draw() -> int override {
-    const auto position = getPosition();
-    const auto y = position.getY();
-    const auto x = position.getX();
-    auto result = 0;
+  void setPosition(Vector position) {
     int count = 0;
-
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(), count = 0; !tiles.isDone(); tiles.next(), count++) {
-      auto tile = tiles.currentObject();
+    float x = position.getX(), y = position.getY();
+    for (auto &tile : this->tiles) {
       tile->setPosition(Vector(count * tileWidth + x, y));
-      result += tile->draw();
+      count++;
     }
-
-    return this->Object::draw() + result;
+    Object::setPosition(position);
   }
 
   void setAltitude(int altitude) {
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(); !tiles.isDone(); tiles.next()) {
-      tiles.currentObject()->setAltitude(altitude);
+    for (auto &tile : this->tiles) {
+      tile->setAltitude(altitude);
     }
     Object::setAltitude(altitude);
   }
 
-  ~Floor() {
-    auto tiles = ObjectListIterator(&this->tiles);
-    for (tiles.first(); !tiles.isDone(); tiles.next()) {
-      auto tile = tiles.currentObject();
-      WM.markForDelete(tile);
+  void teardown() override {
+    auto tiles = WM::getAllObjectsByType("Tile");
+    for (auto &tile : tiles) {
+      WM::markForDelete(tile);
     }
   }
 
@@ -92,6 +83,8 @@ private:
     if (x + this->tileWidth <= 0) {
       setPosition(Vector(0, y));
       return 1;
+    } else {
+      setPosition(position);
     }
 
     return 0;
