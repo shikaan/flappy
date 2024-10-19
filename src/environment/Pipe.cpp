@@ -36,9 +36,9 @@ public:
     const auto pipeWidth = topPipe->getBox().getWidth();
     halfPipeHeight = pipeHeight / 2;
 
-    setPosition(Vector());
+    setPosition({});
     setSolidness(Solidness::SOFT);
-    setBox(Box(Vector(pipeWidth/2, 0), 1, totalPipeHeight));
+    setBox({{pipeWidth, 0}, 1, totalPipeHeight});
     subscribe(OUT_EVENT);
   }
 

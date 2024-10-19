@@ -69,6 +69,7 @@ public:
         CENTER - Vector(birdBox.getWidth() / 2, 32 - birdBox.getHeight() / 2));
     bird->setAltitude(3);
     bird->setAcceleration(Vector(0, 0.1));
+    bird->setVelocity({});
   }
 
   const int PIPE_DISTANCE = WINDOW_WIDTH / 3;

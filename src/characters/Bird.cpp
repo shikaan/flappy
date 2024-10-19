@@ -30,7 +30,6 @@ public:
     const auto height = getBox().getHeight();
 
     setBox(Box(Vector(3, 3), width-6, height-6));
-    setDebug(true);
   }
 
   int eventHandler(const Event *event) override {
