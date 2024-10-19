@@ -1,5 +1,5 @@
-#include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/ObjectUtils.h>
+#include <latebit/core/world/Object.h>
+#include <latebit/core/world/ObjectUtils.h>
 #include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/events/EventStep.h>
@@ -23,22 +23,22 @@ private:
   vector<Object*> tiles = {};
 
 public:
-  Floor(const Vector position): Object("Floor") {
+  Floor(const Vector position, Scene* scene): Object("Floor") {
     this->setSolidness(Solidness::SOFT);
     this->setPosition(position);
-    auto tile = WM::create<Tile>(position);
+    auto tile = WM.createObject<Tile>(scene, position);
     insert(this->tiles, tile);
 
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
-    const auto tiles = int(DM::WINDOW_WIDTH / tileWidth) + 1;
+    const auto tiles = int(WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
-      auto t = WM::create<Tile>(Vector(i * tileWidth + position.getX(), position.getY()));
+      auto t = WM.createObject<Tile>(scene, Vector(i * tileWidth + position.getX(), position.getY()));
       insert(this->tiles, t);
     }
     
-    setBox(Box(DM::WINDOW_WIDTH*2, tileHeight));
+    setBox(Box(WINDOW_WIDTH*2, tileHeight));
     subscribe(STEP_EVENT);
   }
 
@@ -68,9 +68,9 @@ public:
   }
 
   void teardown() override {
-    auto tiles = WM::getAllObjectsByType("Tile");
+    auto tiles = WM.getAllObjectsByType("Tile");
     for (auto &tile : tiles) {
-      WM::markForDelete(tile);
+      WM.markForDelete(tile);
     }
   }
 

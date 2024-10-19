@@ -5,30 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "gdb",
-      "request": "attach",
-      "name": "Attach to PID",
-      "target": "442333",
-      "cwd": "${workspaceRoot}",
-      "valuesFormatting": "parseText"
-    },
-    {
-      "name": "latebit debug (gdb)",
+      "name": "(lldb) Launch",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/FlappyBird",
+      "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
+      "environment": [],
       "externalConsole": false,
-      "MIMode": "gdb",
-      "preLaunchTask": "latebit: Build",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ]
+      "MIMode": "lldb",
+      "preLaunchTask": "CMake: build",
     }
   ]
 }

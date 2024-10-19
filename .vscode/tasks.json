@@ -1,14 +1,14 @@
 {
   "version": "2.0.0",
   "tasks": [
-    {
-      "type": "latebit",
-      "kind": "build",
-      "group": "build",
-      "problemMatcher": [],
-      "label": "latebit: Build",
-      "detail": "Build the project."
-    },
+    // {
+    //   "type": "latebit",
+    //   "kind": "build",
+    //   "group": "build",
+    //   "problemMatcher": [],
+    //   "label": "latebit: Build",
+    //   "detail": "Build the project."
+    // },
     {
       "type": "cppbuild",
       "label": "C/C++: g++ build active file",

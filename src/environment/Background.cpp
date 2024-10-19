@@ -1,5 +1,5 @@
-#include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/ObjectUtils.h>
+#include <latebit/core/world/Object.h>
+#include <latebit/core/world/ObjectUtils.h>
 #include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/events/EventStep.h>
@@ -23,21 +23,21 @@ private:
   vector<Object*> tiles = {};
 
 public:
-  Background(const Vector position): Object("Background") {
+  Background(const Vector position, Scene* scene): Object("Background") {
     this->setPosition(position);
-    const auto tile = WM::create<BackgroundTile>(position);
+    const auto tile = WM.createObject<BackgroundTile>(scene, position);
     insert(this->tiles, tile);
 
     tileWidth = tile->getBox().getWidth();
     const auto tileHeight = tile->getBox().getHeight();
-    const auto tiles = int(DM::WINDOW_WIDTH / tileWidth) + 1;
+    const auto tiles = int(WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
-      auto t = WM::create<BackgroundTile>(Vector(i * tileWidth + position.getX(), position.getY()));
+      auto t = WM.createObject<BackgroundTile>(scene, Vector(i * tileWidth + position.getX(), position.getY()));
       insert(this->tiles, t);
     }
     
-    setBox(Box(DM::WINDOW_HEIGHT*2, tileHeight));
+    setBox(Box(WINDOW_HEIGHT*2, tileHeight));
     subscribe(STEP_EVENT);
     setSolidness(Solidness::SPECTRAL);
   }
@@ -75,7 +75,7 @@ public:
 
   void teardown () override {
     for (auto tile : this->tiles) {
-      WM::markForDelete(tile);
+      WM.markForDelete(tile);
     }
     tiles.clear();
   }

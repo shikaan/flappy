@@ -1,5 +1,5 @@
 #include <latebit/core/graphics/DisplayManager.h>
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/events/EventInput.h>
 #include <latebit/core/world/WorldManager.h>
 #include <latebit/utils/Logger.h>
@@ -7,49 +7,39 @@
 #include "../events/events.h"
 #include "../ui/ui.h"
 #include "../characters/characters.h"
-#include "Scene.h"
-
-using namespace lb;
 
 class GameStartScene : public Scene {
-private:
 public:
-  GameStartScene(): Scene("GameStartScene") {
+  Floor *floor = nullptr;
+  Background *background = nullptr;
+  Logo *logo = nullptr;
+  Bird *bird = nullptr;
+  Text *text = nullptr;
+
+  GameStartScene() {
     subscribe(INPUT_EVENT);
-  }
-
-  void play() override {
-    DM::setBackground(Color::BLUE);
     auto floorSprite = RM.getSprite("floor");
-    WM::create<Floor>(Vector(0, DM::WINDOW_HEIGHT - floorSprite->getHeight()));
-
     auto backgroundSprite = RM.getSprite("background");
-    auto background = WM::create<Background>(Vector(0, DM::WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()));
-    background->setAltitude(0);
 
-    auto logo = WM::create<Logo>();
-    const auto logoBox = logo->getBox();
-    logo->setPosition(Vector(DM::WINDOW_WIDTH / 2 - logoBox.getWidth() / 2, 24));
-
-    auto bird = WM::create<Bird>();
-    const auto birdBox = bird->getBox();
-    bird->setPosition(Vector(DM::WINDOW_WIDTH / 2 - birdBox.getWidth() / 2, 72));
-
-    auto text = WM::create<Text>("Start", "Press START", TextOptions{
+    floor = WM.createObject<Floor>(this, Vector(0, WINDOW_HEIGHT - floorSprite->getHeight()), this);
+    background = WM.createObject<Background>(this, Vector(0, WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()), this);
+    logo = WM.createObject<Logo>(this);
+    bird = WM.createObject<Bird>(this);
+    text = WM.createObject<Text>(this, "Start", "Press START", TextOptions{
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
       .background = Color::DARK_BLUE,
       .shadow = Color::BLACK
     });
-    text->setPosition(Vector(DM::WINDOW_WIDTH / 2, 96));
   }
-
+  
   int eventHandler(const Event *event) override {
     if (event->getType() == INPUT_EVENT) {
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
 
       if (inputEvent->getKey() == InputKey::START && inputEvent->getAction() == InputAction::PRESSED) {
-        WM::broadcast(make_unique<EventGameStart>().get());
+        WM.switchToScene("GameScene");
+        WM.onEvent(make_unique<EventGameStart>().get());
         return 1;
       }
     }
@@ -57,12 +47,19 @@ public:
     return 0;
   }
 
-  void cleanup() override {
-    auto os = WM::getAllObjects();
-    for (auto&o: os) {
-      if (o->getType() == "Logo" || o->getType() == "Bird" || o->getType() == "Start") {
-        WM::markForDelete(o);
-      }
-    }
+  void onActivated() override {
+    DM.setBackground(Color::BLUE);
+
+    logo->setPosition(Vector(WINDOW_WIDTH / 2.0 - logo->getBox().getWidth() / 2, 24));
+    bird->setPosition(Vector(WINDOW_WIDTH / 2.0 - bird->getBox().getWidth() / 2, 72));
+    text->setPosition(Vector(WINDOW_WIDTH / 2.0, 96));
+    
+    background->setAltitude(0);
+    bird->setAltitude(1);
+    floor->setAltitude(1);
+    text->setAltitude(1);
+  }
+
+  void onDeactivated() override {
   }
 };

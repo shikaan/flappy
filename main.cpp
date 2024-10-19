@@ -23,7 +23,10 @@ int main() {
   RM.loadSound("assets/audio/score.lbsfx", "score");
   RM.loadSound("assets/audio/gameover.lbsfx", "game-over");
 
-  WM::create<SceneManager>();
+  WM.createScene<GameStartScene>("GameStartScene");
+  WM.createScene<GameScene>("GameScene");
+  WM.createScene<GameOverScene>("GameOverScene");
+  WM.activateScene("GameStartScene");
   GM.run();
 
   return 0;

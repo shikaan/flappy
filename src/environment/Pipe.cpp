@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/events/EventOut.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
@@ -28,17 +28,18 @@ class Pipe : public Object {
 public:
   const int GAP = 44;
 
-  Pipe(): Object("Pipe") {
-    subscribe(OUT_EVENT);
-    setPosition(Vector());
-    setSolidness(Solidness::SOFT);
-    
+  Pipe(Scene* scene): Object("Pipe") {
+    topPipe = WM.createObject<TopPipe>(scene);
+    bottomPipe = WM.createObject<BottomPipe>(scene);
     const auto pipeHeight = topPipe->getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
     const auto pipeWidth = topPipe->getBox().getWidth();
     halfPipeHeight = pipeHeight / 2;
 
+    setPosition(Vector());
+    setSolidness(Solidness::SOFT);
     setBox(Box(Vector(pipeWidth/2, 0), 1, totalPipeHeight));
+    subscribe(OUT_EVENT);
   }
 
   int eventHandler(const Event *e) override {
@@ -69,20 +70,20 @@ public:
   }
 
   void teardown() override {
-    WM::markForDelete(topPipe);
-    WM::markForDelete(bottomPipe);
+    WM.markForDelete(topPipe);
+    WM.markForDelete(bottomPipe);
   }
 
 private:
-  TopPipe *topPipe = WM::create<TopPipe>();
-  BottomPipe *bottomPipe = WM::create<BottomPipe>();
+  TopPipe *topPipe = nullptr;
+  BottomPipe *bottomPipe = nullptr;
   int halfPipeHeight = 0;
 
   int handleOut() {
     const auto position = getPosition();
     const auto random = rand();
     const int y = position.getY() + (random % 10) * (random % 2 == 0 ? 1 : -1);
-    setPosition(Vector(DM::WINDOW_WIDTH, clamp(y, -halfPipeHeight, 0)));
+    setPosition(Vector(WINDOW_WIDTH, clamp(y, -halfPipeHeight, 0)));
     return 1;
   }
 };

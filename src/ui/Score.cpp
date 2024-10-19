@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/graphics/DisplayManager.h>
 #include "../events/events.h"
 #include "../State.h"
@@ -15,8 +15,8 @@ class Score : public Object {
   int draw() override {
     const int currentScore = STATE.getScore();
     int result = 0;
-    result += DM::drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
-    result += DM::drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
+    result += DM.drawString(getPosition() + Vector(1,1),to_string(currentScore), TextAlignment::CENTER, Color::BLACK, TextSize::XLARGE);
+    result += DM.drawString(getPosition(),to_string(currentScore), TextAlignment::CENTER, Color::WHITE, TextSize::XLARGE);
     return result;
   }
 };

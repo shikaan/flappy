@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/graphics/DisplayManager.h>
 
 using namespace lb;

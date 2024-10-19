@@ -3,7 +3,7 @@
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/events/EventInput.h>
 #include <latebit/core/events/EventCollision.h>
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/utils/Logger.h>
@@ -30,6 +30,7 @@ public:
     const auto height = getBox().getHeight();
 
     setBox(Box(Vector(3, 3), width-6, height-6));
+    setDebug(true);
   }
 
   int eventHandler(const Event *event) override {
@@ -76,8 +77,8 @@ private:
 
     if (dashStep >= 0) {
       if (dashStep == DASH_DURATION) {
-        setVelocity(Vector());
-        setAcceleration(Vector(0, -1));
+        setVelocity({});
+        setAcceleration({0, -1});
       } else if (dashStep == 0) {
         dashStep = -1;
         dashCooldown = DASH_COOLDOWN;
@@ -93,7 +94,7 @@ private:
     if (isScoring && scoringPipe && !intersects(getWorldBox(), scoringPipe->getWorldBox())) {
       isScoring = false;
       scoringPipe = nullptr;
-      WM::broadcast(make_unique<EventScore>().get());
+      WM.onEvent(make_unique<EventScore>().get());
       return 1;
     }
 
@@ -112,7 +113,7 @@ private:
 
     for (const auto& deadlyObject : DEADLY_OBJECTS) {
       if (other->getType() == deadlyObject) {
-        WM::broadcast(make_unique<EventGameOver>().get());
+        WM.onEvent(make_unique<EventGameOver>().get());
         return 1;
       }
     }

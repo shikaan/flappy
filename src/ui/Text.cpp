@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/graphics/DisplayManager.h>
 
 using namespace lb;
@@ -27,7 +27,7 @@ public:
 
     if (options.background != Color::UNDEFINED_COLOR) {
       auto offset = (int)options.size;
-      auto size = DM::measureString(text, options.size);
+      auto size = DM.measureString(text, options.size);
       size.setHeight(size.getHeight() + offset*4);
       size.setWidth(size.getWidth() + offset*8);
 
@@ -40,14 +40,14 @@ public:
 
       position.setY(position.getY() - offset*2);
 
-      result += DM::drawRectangle(position, size.getWidth(), size.getHeight(), options.background, options.background);
+      result += DM.drawRectangle(position, size.getWidth(), size.getHeight(), options.background, options.background);
     }
 
     if (options.shadow != Color::UNDEFINED_COLOR) {
-      result += DM::drawString(getPosition() + Vector(options.size, options.size), text, options.alignment, options.shadow, options.size);
+      result += DM.drawString(getPosition() + Vector(options.size, options.size), text, options.alignment, options.shadow, options.size);
     }
 
-    return DM::drawString(getPosition(), text, options.alignment, options.color, options.size) + result;
+    return DM.drawString(getPosition(), text, options.alignment, options.color, options.size) + result;
   }
 
   void setText(const string text) {
