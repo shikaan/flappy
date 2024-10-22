@@ -9,8 +9,9 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -gdwarf-2 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-set(LATEBIT_VERSION "v0.8.1")
+set(LATEBIT_VERSION "v0.9.0")
 
 file(GLOB SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 

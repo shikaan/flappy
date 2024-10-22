@@ -3,11 +3,10 @@
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/events/EventInput.h>
 #include <latebit/core/events/EventCollision.h>
-#include <latebit/core/objects/Object.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/world/Object.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/core/ResourceManager.h>
 #include <latebit/utils/Logger.h>
-#include <latebit/core/objects/WorldManager.h>
 #include <latebit/core/utils/utils.h>
 
 #include "../events/events.h"
@@ -17,10 +16,11 @@ using namespace lb;
 
 class Bird : public Object {
 public:
+  Vector ACCELERATION = Vector(0, 0.15);
+
   Bird() {
     setType("Bird");
     setSprite("bird");
-    setVelocity(VELOCITY);
   
     subscribe(INPUT_EVENT);
     subscribe(STEP_EVENT);
@@ -36,10 +36,9 @@ public:
     if (event->getType() == INPUT_EVENT) {
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
 
-      if (inputEvent->getKey() == InputKey::A && inputEvent->getAction() == InputAction::PRESSED) {
+      if (dashStep < 0 && DASH_COOLDOWN > 0 && inputEvent->getKey() == InputKey::A && inputEvent->getAction() == InputAction::PRESSED) {
         this->sfx->play();
-        isDashing = true;
-        dashingStep = DASH_DURATION;
+        dashStep = DASH_DURATION;
 
         return 1;
       }
@@ -58,38 +57,43 @@ public:
 
 private:
   const Sound* sfx = RM.getSound("dash");
-  const Vector VELOCITY = Vector(0, 0.8);
-  const int DASH_DURATION = 12;
+  const int DASH_DURATION = 2;
+  const int DASH_COOLDOWN = 40;
 
-  bool isDashing = false;
-  int dashingStep = -1;
+  int dashStep = -1;
+  int dashCooldown = 0;
 
   bool isScoring = false;
   const Pipe* scoringPipe = nullptr;
 
   int handleStep() {
-    const auto velocity = getVelocity();
-    
-    if (isDashing) {
-      if (dashingStep == DASH_DURATION) {
-        setVelocity(Vector(0));
-      } else if (dashingStep >= DASH_DURATION*2/3) {
-        setVelocity(velocity + Vector(0, -1));
-      } else if (dashingStep >= DASH_DURATION/3) {
-        setVelocity(velocity + Vector(0, 1));
-      } else if (dashingStep == 0) {
-        isDashing = false;
-        setVelocity(VELOCITY);
+    if (getPosition().getY() < 24) {
+      setPosition(Vector(getPosition().getX(), 24));
+      setVelocity(Vector(getVelocity().getX(), 0));
+      setAcceleration(ACCELERATION);
+      dashCooldown = DASH_COOLDOWN;
+    }
+
+    if (dashStep >= 0) {
+      if (dashStep == DASH_DURATION) {
+        setVelocity({});
+        setAcceleration({0, -1});
+      } else if (dashStep == 0) {
+        dashStep = -1;
+        dashCooldown = DASH_COOLDOWN;
+        setAcceleration(ACCELERATION);
       }
 
-      dashingStep--;
+      dashStep--;
       return 1;
+    } else {
+      dashCooldown--;
     }
 
     if (isScoring && scoringPipe && !intersects(getWorldBox(), scoringPipe->getWorldBox())) {
       isScoring = false;
       scoringPipe = nullptr;
-      WM.onEvent(new EventScore());
+      WM.broadcast(make_unique<EventScore>().get());
       return 1;
     }
 
@@ -108,7 +112,7 @@ private:
 
     for (const auto& deadlyObject : DEADLY_OBJECTS) {
       if (other->getType() == deadlyObject) {
-        WM.onEvent(new EventGameOver());
+        WM.broadcast(make_unique<EventGameOver>().get());
         return 1;
       }
     }

@@ -1,8 +1,8 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/events/EventOut.h>
 #include <latebit/core/events/EventStep.h>
 #include <latebit/core/graphics/DisplayManager.h>
-#include <latebit/core/objects/WorldManager.h>
+#include <latebit/core/world/WorldManager.h>
 #include <latebit/utils/Logger.h>
 #include <latebit/utils/Math.h>
 
@@ -26,19 +26,20 @@ public:
 
 class Pipe : public Object {
 public:
-  const int GAP = 36;
+  const int GAP = 44;
 
-  Pipe(): Object("Pipe") {
-    subscribe(OUT_EVENT);
-    setPosition(Vector());
-    setSolidness(Solidness::SOFT);
-    
+  Pipe(Scene* scene): Object("Pipe") {
+    topPipe = scene->createObject<TopPipe>();
+    bottomPipe = scene->createObject<BottomPipe>();
     const auto pipeHeight = topPipe->getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
     const auto pipeWidth = topPipe->getBox().getWidth();
     halfPipeHeight = pipeHeight / 2;
 
-    setBox(Box(Vector(pipeWidth/2, 0), 1, totalPipeHeight));
+    setPosition({});
+    setSolidness(Solidness::SOFT);
+    setBox({{pipeWidth, 0}, 1, totalPipeHeight});
+    subscribe(OUT_EVENT);
   }
 
   int eventHandler(const Event *e) override {
@@ -68,22 +69,21 @@ public:
     Object::setAltitude(altitude);
   }
 
-  ~Pipe() {
+  void teardown() override {
     WM.markForDelete(topPipe);
     WM.markForDelete(bottomPipe);
-    Object::~Object();
   }
 
 private:
-  TopPipe *topPipe = new TopPipe();
-  BottomPipe *bottomPipe = new BottomPipe();
+  TopPipe *topPipe = nullptr;
+  BottomPipe *bottomPipe = nullptr;
   int halfPipeHeight = 0;
 
   int handleOut() {
     const auto position = getPosition();
     const auto random = rand();
     const int y = position.getY() + (random % 10) * (random % 2 == 0 ? 1 : -1);
-    setPosition(Vector(DM.getHorizontalCells(), clamp(y, -halfPipeHeight, 0)));
+    setPosition(Vector(WINDOW_WIDTH, clamp(y, -halfPipeHeight, 0)));
     return 1;
   }
 };

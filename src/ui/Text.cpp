@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/graphics/DisplayManager.h>
 
 using namespace lb;
@@ -47,7 +47,7 @@ public:
       result += DM.drawString(getPosition() + Vector(options.size, options.size), text, options.alignment, options.shadow, options.size);
     }
 
-    return DM.drawString(getPosition(), text, options.alignment, options.color, options.size);
+    return DM.drawString(getPosition(), text, options.alignment, options.color, options.size) + result;
   }
 
   void setText(const string text) {
