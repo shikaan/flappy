@@ -29,8 +29,8 @@ public:
   const int GAP = 44;
 
   Pipe(Scene* scene): Object("Pipe") {
-    topPipe = WM.createObject<TopPipe>(scene);
-    bottomPipe = WM.createObject<BottomPipe>(scene);
+    topPipe = scene->createObject<TopPipe>();
+    bottomPipe = scene->createObject<BottomPipe>();
     const auto pipeHeight = topPipe->getBox().getHeight();
     const auto totalPipeHeight = 2*pipeHeight + GAP;
     const auto pipeWidth = topPipe->getBox().getWidth();

@@ -32,13 +32,14 @@ public:
 
     auto floorSprite = RM.getSprite("floor");
     auto backgroundSprite = RM.getSprite("background");
-    bird = WM.createObject<Bird>(this);
-    score = WM.createObject<Score>(this);
-    pipes[0] = WM.createObject<Pipe>(this, this);
-    pipes[1] = WM.createObject<Pipe>(this, this);
-    pipes[2] = WM.createObject<Pipe>(this, this);
-    background = WM.createObject<Background>(this, Vector(0, WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()), this);
-    floor = WM.createObject<Floor>(this, Vector(0, WINDOW_HEIGHT - floorSprite->getHeight()), this);
+    bird = this->createObject<Bird>();
+    bird->setActive(false);
+    score = this->createObject<Score>();
+    pipes[0] = this->createObject<Pipe>(this);
+    pipes[1] = this->createObject<Pipe>(this);
+    pipes[2] = this->createObject<Pipe>(this);
+    background = this->createObject<Background>(Vector(0, WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()), this);
+    floor = this->createObject<Floor>(Vector(0, WINDOW_HEIGHT - floorSprite->getHeight()), this);
   }
 
   int eventHandler(const Event *event) override {
@@ -101,8 +102,10 @@ public:
     makeBird();
     makeFloor();
     makeBackground();
+    bird->setActive(true);
   }
 
   void onDeactivated() override {
+    bird->setActive(false);
   };
 };

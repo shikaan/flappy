@@ -93,7 +93,7 @@ private:
     if (isScoring && scoringPipe && !intersects(getWorldBox(), scoringPipe->getWorldBox())) {
       isScoring = false;
       scoringPipe = nullptr;
-      WM.onEvent(make_unique<EventScore>().get());
+      WM.broadcast(make_unique<EventScore>().get());
       return 1;
     }
 
@@ -112,7 +112,7 @@ private:
 
     for (const auto& deadlyObject : DEADLY_OBJECTS) {
       if (other->getType() == deadlyObject) {
-        WM.onEvent(make_unique<EventGameOver>().get());
+        WM.broadcast(make_unique<EventGameOver>().get());
         return 1;
       }
     }

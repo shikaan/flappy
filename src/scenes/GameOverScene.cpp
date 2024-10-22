@@ -14,6 +14,7 @@ using namespace lb;
 
 class GameOverScene : public Scene {
 private:
+  const int RESTART_DELAY_STEPS = 60;
 public:
   int stepsSinceStart = 0;
   Text* start = nullptr;
@@ -22,7 +23,7 @@ public:
 
   GameOverScene() {
     const auto center = Vector(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);
-    auto gameOver = WM.createObject<Text>(this, "GameOver", "GAME OVER", TextOptions{
+    auto gameOver = this->createObject<Text>("GameOver", "GAME OVER", TextOptions{
       .size = TextSize::XXLARGE,
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
@@ -30,7 +31,7 @@ public:
     });
     gameOver->setPosition(center + Vector(0, -64));
 
-    score = WM.createObject<Text>(this, "Score", "SCORE: 0", TextOptions{
+    score = this->createObject<Text>("Score", "SCORE: 0", TextOptions{
       .size = TextSize::LARGE,
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
@@ -38,7 +39,7 @@ public:
     });
     score->setPosition(center);
 
-    highScore = WM.createObject<Text>(this, "HighScore", "HIGH: 0", TextOptions{
+    highScore = this->createObject<Text>("HighScore", "HIGH: 0", TextOptions{
       .size = TextSize::LARGE,
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
@@ -46,7 +47,7 @@ public:
     });
     highScore->setPosition(center + Vector(0, 24));
 
-    start = WM.createObject<Text>(this, "Start", "Press START", TextOptions{
+    start = this->createObject<Text>("Start", "Press START", TextOptions{
       .size = TextSize::NORMAL,
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
@@ -67,11 +68,11 @@ public:
   }
 
   int eventHandler(const Event *event) override {
-    if (event->getType() == INPUT_EVENT && stepsSinceStart > 60) {
+    if (event->getType() == INPUT_EVENT && stepsSinceStart > RESTART_DELAY_STEPS) {
       const EventInput* inputEvent = static_cast<const EventInput*>(event);
 
       if (inputEvent->getKey() == InputKey::START && inputEvent->getAction() == InputAction::PRESSED) {
-        WM.onEvent(make_unique<EventGameStart>().get());
+        WM.broadcast(make_unique<EventGameStart>().get());
         WM.switchToScene("GameScene");
         return 1;
       }
@@ -79,7 +80,7 @@ public:
 
     if (event->getType() == STEP_EVENT) {
       stepsSinceStart++;
-      if (stepsSinceStart > 60) {
+      if (stepsSinceStart > RESTART_DELAY_STEPS) {
         start->setVisible(true);
       }
     }

@@ -21,11 +21,11 @@ public:
     auto floorSprite = RM.getSprite("floor");
     auto backgroundSprite = RM.getSprite("background");
 
-    floor = WM.createObject<Floor>(this, Vector(0, WINDOW_HEIGHT - floorSprite->getHeight()), this);
-    background = WM.createObject<Background>(this, Vector(0, WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()), this);
-    logo = WM.createObject<Logo>(this);
-    bird = WM.createObject<Bird>(this);
-    text = WM.createObject<Text>(this, "Start", "Press START", TextOptions{
+    floor = this->createObject<Floor>(Vector(0, WINDOW_HEIGHT - floorSprite->getHeight()), this);
+    background = this->createObject<Background>(Vector(0, WINDOW_HEIGHT - backgroundSprite->getHeight() - floorSprite->getHeight()), this);
+    logo = this->createObject<Logo>();
+    bird = this->createObject<Bird>();
+    text = this->createObject<Text>("Start", "Press START", TextOptions{
       .alignment = TextAlignment::CENTER,
       .color = Color::WHITE,
       .background = Color::DARK_BLUE,
@@ -39,7 +39,7 @@ public:
 
       if (inputEvent->getKey() == InputKey::START && inputEvent->getAction() == InputAction::PRESSED) {
         WM.switchToScene("GameScene");
-        WM.onEvent(make_unique<EventGameStart>().get());
+        WM.broadcast(make_unique<EventGameStart>().get());
         return 1;
       }
     }
@@ -58,8 +58,11 @@ public:
     bird->setAltitude(1);
     floor->setAltitude(1);
     text->setAltitude(1);
+
+    bird->setActive(false);
   }
 
   void onDeactivated() override {
+    WM.markForDelete(bird);
   }
 };

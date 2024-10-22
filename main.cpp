@@ -8,7 +8,7 @@
 using namespace lb;
 
 int main() {
-  // Log.setLevel(LogLevel::DEBUG);
+  Log.setLevel(LogLevel::ERROR);
   Log.setDestination(LogDestination::STDOUT);
   Configuration::fromFile("latebit.cfg");
   GM.startUp();

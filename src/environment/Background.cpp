@@ -25,7 +25,7 @@ private:
 public:
   Background(const Vector position, Scene* scene): Object("Background") {
     this->setPosition(position);
-    const auto tile = WM.createObject<BackgroundTile>(scene, position);
+    const auto tile = scene->createObject<BackgroundTile>(position);
     insert(this->tiles, tile);
 
     tileWidth = tile->getBox().getWidth();
@@ -33,7 +33,7 @@ public:
     const auto tiles = int(WINDOW_WIDTH / tileWidth) + 1;
 
     for (int i = 1; i <= tiles; i++) {
-      auto t = WM.createObject<BackgroundTile>(scene, Vector(i * tileWidth + position.getX(), position.getY()));
+      auto t = scene->createObject<BackgroundTile>(Vector(i * tileWidth + position.getX(), position.getY()));
       insert(this->tiles, t);
     }
     
