@@ -26,9 +26,10 @@ public:
     int result = 0;
 
     if (options.background != Color::UNDEFINED_COLOR) {
+      auto offset = (int)options.size;
       auto size = DM.measureString(text, options.size);
-      size.setHeight(size.getHeight() + options.size*2);
-      size.setWidth(size.getWidth() + options.size*4);
+      size.setHeight(size.getHeight() + offset*4);
+      size.setWidth(size.getWidth() + offset*8);
 
       auto position = getPosition();
       if (options.alignment == TextAlignment::CENTER) {
@@ -37,7 +38,7 @@ public:
         position.setX(position.getX() - size.getWidth());
       }
 
-      position.setY(position.getY() - options.size);
+      position.setY(position.getY() - offset*2);
 
       result += DM.drawRectangle(position, size.getWidth(), size.getHeight(), options.background, options.background);
     }

@@ -8,7 +8,7 @@
       "name": "latebit debug (gdb)",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/latebit_template",
+      "program": "${workspaceFolder}/build/FlappyBird",
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "externalConsole": false,

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.1)
-project(latebit_template)
+project(FlappyBird)
 
 include(cmake/FetchEngine.cmake)
 include(cmake/FetchKiosk.cmake)
