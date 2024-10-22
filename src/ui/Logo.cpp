@@ -1,4 +1,5 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
+#include <latebit/core/graphics/DisplayManager.h>
 
 using namespace lb;
 
@@ -7,12 +8,7 @@ public:
   Logo(): Object("Logo") {
     setSprite("logo");
     auto box = getBox();
-    setBox(Box(box.getWidth() * 3, box.getHeight() * 3));  
-  }
-
-  int draw() override {
-    auto animation = getAnimation();
-    auto frame = animation.getSprite()->getFrame(0);
-    return DM.drawFrame(getPosition(), &frame, 3);
+    setBox(Box(box.getWidth() * 3, box.getHeight() * 3));
+    this->setScale(3);
   }
 };

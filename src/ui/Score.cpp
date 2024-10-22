@@ -1,4 +1,4 @@
-#include <latebit/core/objects/Object.h>
+#include <latebit/core/world/Object.h>
 #include <latebit/core/graphics/DisplayManager.h>
 #include "../events/events.h"
 #include "../State.h"
@@ -9,6 +9,7 @@ class Score : public Object {
   public:
   Score(): Object("Score") {
     subscribe(SCORE_EVENT);
+    setSolidness(Solidness::SPECTRAL);
   }
 
   int draw() override {

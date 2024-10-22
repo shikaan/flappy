@@ -1,5 +1,5 @@
 #pragma once
 
-#include "SceneManager.cpp"
-
-class SceneManager;
+#include "GameOverScene.cpp"
+#include "GameScene.cpp"
+#include "GameStartScene.cpp"

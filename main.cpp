@@ -1,5 +1,4 @@
 #include "src/scenes/scenes.h"
-#include "src/events/events.h"
 
 #include <latebit/core/configuration/Configuration.h>
 #include <latebit/core/GameManager.h>
@@ -9,7 +8,7 @@
 using namespace lb;
 
 int main() {
-  // Log.setLevel(LogLevel::DEBUG);
+  Log.setLevel(LogLevel::ERROR);
   Log.setDestination(LogDestination::STDOUT);
   Configuration::fromFile("latebit.cfg");
   GM.startUp();
@@ -24,9 +23,11 @@ int main() {
   RM.loadSound("assets/audio/score.lbsfx", "score");
   RM.loadSound("assets/audio/gameover.lbsfx", "game-over");
 
-  auto scene = new SceneManager();
+  WM.createScene<GameStartScene>("GameStartScene");
+  WM.createScene<GameScene>("GameScene");
+  WM.createScene<GameOverScene>("GameOverScene");
+  WM.activateScene("GameStartScene");
   GM.run();
-  delete scene;
 
   return 0;
 }
