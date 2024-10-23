@@ -11,7 +11,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -gdwarf-2 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-set(LATEBIT_VERSION "v0.9.0")
+set(LATEBIT_VERSION "v0.9.1")
 
 file(GLOB SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
@@ -23,7 +23,7 @@ if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten")
   fetch_latebit_kiosk("v0.0.4" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
   add_executable(index main.cpp ${SRC_FILES})
-  set_target_properties(index PROPERTIES LINK_FLAGS "-sUSE_SDL=2 -sUSE_LIBPNG=1 -sSTACK_SIZE=1MB -sEXPORTED_RUNTIME_METHODS=['callMain'] --preload-file assets")
+  set_target_properties(index PROPERTIES LINK_FLAGS "-sUSE_SDL=2 -sUSE_LIBPNG=1 -sSTACK_SIZE=1MB -sEXPORTED_RUNTIME_METHODS=['callMain'] -sENVIRONMENT=web --preload-file assets")
   target_include_directories(index PRIVATE ${CMAKE_SOURCE_DIR}/src)
   target_link_libraries(index PRIVATE latebit)
 else()
