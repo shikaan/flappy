@@ -11,25 +11,26 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -gdwarf-2 -Wall -Wextra -Wpedantic -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-set(LATEBIT_VERSION "v0.9.1")
+set(LATEBIT_VERSION "v0.10.0")
 
 file(GLOB SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 if ("${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten")
   fetch_latebit(${LATEBIT_VERSION} "wasm")
   file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
+  file(COPY ${CMAKE_SOURCE_DIR}/latebit.cfg DESTINATION ${CMAKE_BINARY_DIR})
   
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/public)
   fetch_latebit_kiosk("v0.0.4" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
   add_executable(index main.cpp ${SRC_FILES})
-  set_target_properties(index PROPERTIES LINK_FLAGS "-sUSE_SDL=2 -sUSE_LIBPNG=1 -sSTACK_SIZE=1MB -sEXPORTED_RUNTIME_METHODS=['callMain'] -sENVIRONMENT=web --preload-file assets")
+  set_target_properties(index PROPERTIES LINK_FLAGS "-sUSE_SDL=2 -sUSE_LIBPNG=1 -sSTACK_SIZE=1MB -sEXPORTED_RUNTIME_METHODS=['callMain'] -sENVIRONMENT=web --preload-file assets --preload-file latebit.cfg")
   target_include_directories(index PRIVATE ${CMAKE_SOURCE_DIR}/src)
-  target_link_libraries(index PRIVATE latebit)
+  target_link_libraries(index PRIVATE latebit latebitui)
 else()
   fetch_latebit(${LATEBIT_VERSION} ${CMAKE_SYSTEM_NAME})
 
   add_executable(${PROJECT_NAME} main.cpp ${SRC_FILES})
-  target_link_libraries(${PROJECT_NAME} PRIVATE latebit)
+  target_link_libraries(${PROJECT_NAME} PRIVATE latebit latebitui)
   target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 endif()

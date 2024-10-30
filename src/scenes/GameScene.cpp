@@ -4,13 +4,14 @@
 #include <latebit/core/ResourceManager.h>
 #include <latebit/core/GameManager.h>
 #include <latebit/core/world/WorldManager.h>
+#include <latebit/ui/Text.h>
 
 #include "../characters/characters.h"
 #include "../environment/environment.h"
-#include "../ui/ui.h"
 #include "../State.h"
 
 using namespace lb;
+using namespace lbui;
 
 class GameScene : public Scene {
 public:
@@ -21,7 +22,7 @@ public:
   const Sound* gameOverSfx = RM.getSound("game-over");
 
   Bird* bird = nullptr;
-  Score* score = nullptr;
+  Text* score = nullptr;
   array<Pipe*, 3> pipes = {nullptr, nullptr, nullptr};
   Background* background = nullptr;
   Floor* floor = nullptr;
@@ -34,7 +35,12 @@ public:
     auto backgroundSprite = RM.getSprite("background");
     bird = this->createObject<Bird>();
     bird->setActive(false);
-    score = this->createObject<Score>();
+    score = this->createObject<Text>("Score", "0", TextOptions{
+      .size = TextSize::LARGE,
+      .alignment = TextAlignment::CENTER,
+      .color = Color::WHITE,
+      .shadow = Color::BLACK
+    });
     pipes[0] = this->createObject<Pipe>(this);
     pipes[1] = this->createObject<Pipe>(this);
     pipes[2] = this->createObject<Pipe>(this);
@@ -52,6 +58,7 @@ public:
     if (event->getType() == SCORE_EVENT) {
       this->scoreSfx->play();
       STATE.increment();
+      score->setContent(std::to_string(STATE.getScore()));
       return 1;
     }
 
@@ -62,6 +69,7 @@ public:
     STATE.reset();
     score->setPosition(Vector(WINDOW_WIDTH / 2.0, 8));
     score->setAltitude(4);
+    score->setContent("0");
   }
 
   void makeBird() {

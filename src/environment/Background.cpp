@@ -66,7 +66,7 @@ public:
     return this->Object::draw() + result;
   }
 
-  void setAltitude(int altitude) {
+  void setAltitude(int altitude) override {
     for (auto tile : this->tiles) {
       tile->setAltitude(altitude);
     }

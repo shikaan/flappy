@@ -50,7 +50,7 @@ public:
     return 0;
   }
 
-  void setPosition(Vector position) {
+  void setPosition(Vector position) override {
     int count = 0;
     float x = position.getX(), y = position.getY();
     for (auto &tile : this->tiles) {
@@ -60,7 +60,7 @@ public:
     Object::setPosition(position);
   }
 
-  void setAltitude(int altitude) {
+  void setAltitude(int altitude) override {
     for (auto &tile : this->tiles) {
       tile->setAltitude(altitude);
     }

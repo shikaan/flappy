@@ -40,6 +40,13 @@ function(fetch_latebit version system_name)
       IMPORTED_LOCATION ${LIB_FILES}
       INTERFACE_INCLUDE_DIRECTORIES ${latebit_SOURCE_DIR}/include
     )
+    
+    add_library(latebitui UNKNOWN IMPORTED)
+    file(GLOB LIB_FILES "${latebit_SOURCE_DIR}/lib/libui.*")
+    set_target_properties(latebitui PROPERTIES
+      IMPORTED_LOCATION ${LIB_FILES}
+      INTERFACE_INCLUDE_DIRECTORIES ${latebit_SOURCE_DIR}/include
+    )
   endif()
   add_definitions(-DLATEBIT_VERSION="${version}")
   message(STATUS "Fetching latebit ${version} for ${system_name} ${arch} - done")
