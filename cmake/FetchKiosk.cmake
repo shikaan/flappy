@@ -8,7 +8,7 @@ function(fetch_latebit_kiosk version public_dir)
   FetchContent_GetProperties(latebit_kiosk)
 
   if(NOT latebit_kiosk_POPULATED)
-    FetchContent_Populate(latebit_kiosk)
+  FetchContent_MakeAvailable(latebit_kiosk)
     
     # Makes the project name human readable (my_game -> my game
     # TODO: this should ideally be read from the configuration

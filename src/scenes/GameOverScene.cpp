@@ -6,11 +6,13 @@
 #include <latebit/core/world/Scene.h>
 #include <latebit/core/world/WorldManager.h>
 #include <latebit/utils/Logger.h>
+#include <latebit/ui/Text.h>
 
 #include "../events/events.h"
-#include "../ui/ui.h"
+#include "../State.h"
 
 using namespace lb;
+using namespace lbui;
 
 class GameOverScene : public Scene {
 private:
@@ -63,8 +65,8 @@ public:
     DM.setBackground(Color::DARK_BLUE);
     stepsSinceStart = 0;
     start->setVisible(false);
-    score->setText("SCORE: " + to_string(STATE.getScore()));
-    highScore->setText("HIGH: " + to_string(STATE.getHighScore()));
+    score->setContent("SCORE: " + to_string(STATE.getScore()));
+    highScore->setContent("HIGH: " + to_string(STATE.getHighScore()));
   }
 
   int eventHandler(const Event *event) override {

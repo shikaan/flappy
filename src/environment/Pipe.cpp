@@ -49,21 +49,19 @@ public:
     return 0;
   }
 
-  int setPosition(const Vector &position) {
+  void setPosition(Vector position) override {
     topPipe->setPosition(position);
     bottomPipe->setPosition(Vector(position.getX(), position.getY() + topPipe->getBox().getHeight() + GAP));
     Object::setPosition(position);
-    return 1;
   }
 
-  int setVelocity(const Vector &velocity) {
+  void setVelocity(Vector velocity) override {
     topPipe->setVelocity(velocity);
     bottomPipe->setVelocity(velocity);
     Object::setVelocity(velocity);
-    return 1;
   }
 
-  void setAltitude(int altitude) {
+  void setAltitude(int altitude) override {
     topPipe->setAltitude(altitude);
     bottomPipe->setAltitude(altitude);
     Object::setAltitude(altitude);
